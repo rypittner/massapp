@@ -39,23 +39,29 @@ async function handleSignup() {
 
 // Log In Function
 async function handleLogin() {
+    // 1. Check if they are already logged in FIRST
     try {
-        // 1. Check if a session already exists
-        try {
-            await account.get();
-            // If this succeeds, user is already logged in
-            window.location.href = 'dashboard.html';
-            return; // Exit the function early
-        } catch (authError) {
-            // No session exists, proceed to login
-        }
+        await account.get();
+        window.location.href = 'dashboard.html';
+        return; // Stop execution here
+    } catch (authError) {
+        // This is good! It means no session exists. Proceed to login.
+        console.log("No active session. Proceeding with login...");
+    }
+
+    // 2. Grab the credentials from the UI
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+
+    // 3. Attempt to create the session
     try {
-        await account.createEmailSession(email, password);
-        showApp();
+        // Use createEmailPasswordSession if on Appwrite 14+ 
+        await account.createEmailPasswordSession(email, password);
+        
+        // 4. Redirect to dashboard
+        window.location.href = 'dashboard.html';
     } catch (error) {
-        alert(error.message);
+        alert("Login failed: " + error.message);
     }
 }
 
