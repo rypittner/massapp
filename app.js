@@ -61,27 +61,24 @@ async function handleLogout() {
     location.reload();
 }
 
-// Check Session on Page Load
 async function checkSession() {
     try {
-        // Attempt to get the current user's details
-        const user = await account.get();
-        
-        // If successful, and user is on the landing/login page, redirect to dashboard
-        if (window.location.pathname.endsWith('welcome.html') || window.location.pathname === '/') {
+        // Attempt to get the current user session
+        await account.get();
+
+        // SUCCESS: The user is logged in.
+        // If they are NOT already on the dashboard, send them there.
+        if (!window.location.pathname.endsWith('dashboard.html')) {
             window.location.href = 'dashboard.html';
         }
-        
-        // Optional: If you have elements meant for logged-in users only
-        console.log("Logged in as:", user.name);
-        
+
     } catch (error) {
-        // If this fails, the user is not logged in.
-        // If they are trying to access a protected page (like dashboard.html), 
-        // you might want to redirect them back to the login page.
+        // FAILURE: No active session.
+        // If they try to access the dashboard, kick them back to the start.
         if (window.location.pathname.endsWith('dashboard.html')) {
-            window.location.href = 'index.html';
+            window.location.href = 'welcome.html'; // Or your main index page
         }
+        console.log("Logged out: Access to public pages allowed.");
     }
 }
 
