@@ -8,6 +8,16 @@ const account = new Account(client);
 
 // Sign Up Function
 async function handleSignup() {
+    try {
+        // 1. Check if a session already exists
+        try {
+            await account.get();
+            // If this succeeds, user is already logged in
+            window.location.href = 'dashboard.html';
+            return; // Exit the function early
+        } catch (authError) {
+            // No session exists, proceed to login
+        }
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const fullname = document.getElementById('fullname').value;
@@ -29,6 +39,16 @@ async function handleSignup() {
 
 // Log In Function
 async function handleLogin() {
+    try {
+        // 1. Check if a session already exists
+        try {
+            await account.get();
+            // If this succeeds, user is already logged in
+            window.location.href = 'dashboard.html';
+            return; // Exit the function early
+        } catch (authError) {
+            // No session exists, proceed to login
+        }
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     try {
@@ -57,7 +77,7 @@ async function checkSession() {
         const user = await account.get();
         
         // If successful, and user is on the landing/login page, redirect to dashboard
-        if (window.location.pathname.endsWith('welcome') || window.location.pathname === '/') {
+        if (window.location.pathname.endsWith('welcome.html') || window.location.pathname === '/') {
             window.location.href = 'dashboard.html';
         }
         
