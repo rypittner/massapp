@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appwrite App</title>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="auth-container">
+        <h2>Login or Signup</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="handleSignup()">Sign Up</button>
+        <button onclick="handleLogin()">Log In</button>
+    </div>
+
+    <div id="app-content" style="display:none;">
+        <h2>Welcome to the App!</h2>
+        <button onclick="handleLogout()">Log Out</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
