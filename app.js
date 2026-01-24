@@ -8,15 +8,7 @@ const account = new Account(client);
 
 // Sign Up Function
 async function handleSignup() {
-    // 1. Check for existing session (The "Gatekeeper")
-    try {
-        await account.get();
-        window.location.href = 'dashboard.html';
-        return; // Stop here if logged in
-    } catch (authError) {
-        // This catch is SILENT because we expect it to fail for new users
-        console.log("No active session, ready to sign up.");
-    }
+    checkSession();
 
     // 2. The Main Signup Logic (One single try block)
     try {
@@ -29,7 +21,7 @@ async function handleSignup() {
         await account.create(username, email, password, fullname);
         
         // Log in
-        await account.createEmailPasswordSession(email, password);
+        await account.createEmailSession(email, password);
         
         window.location.href = 'dashboard.html';
     } catch (error) {
@@ -40,15 +32,7 @@ async function handleSignup() {
 
 // Log In Function
 async function handleLogin() {
-    // 1. Check if they are already logged in FIRST
-    try {
-        await account.get();
-        window.location.href = 'dashboard.html';
-        return; // Stop execution here
-    } catch (authError) {
-        // This is good! It means no session exists. Proceed to login.
-        console.log("No active session. Proceeding with login...");
-    }
+    checkSession();
 
     // 2. Grab the credentials from the UI
     const email = document.getElementById('email').value;
@@ -57,7 +41,7 @@ async function handleLogin() {
     // 3. Attempt to create the session
     try {
         // Use createEmailPasswordSession if on Appwrite 14+ 
-        await account.createEmailPasswordSession(email, password);
+        await account.createEmailSession(email, password);
         
         // 4. Redirect to dashboard
         window.location.href = 'dashboard.html';
