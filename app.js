@@ -8,31 +8,32 @@ const account = new Account(client);
 
 // Sign Up Function
 async function handleSignup() {
+    // 1. Check for existing session (The "Gatekeeper")
     try {
-        // 1. Check if a session already exists
-        try {
-            await account.get();
-            // If this succeeds, user is already logged in
-            window.location.href = 'dashboard.html';
-            return; // Exit the function early
-        } catch (authError) {
-            // No session exists, proceed to login
-        }
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const fullname = document.getElementById('fullname').value;
-    const username = document.getElementById('username').value;
+        await account.get();
+        window.location.href = 'dashboard.html';
+        return; // Stop here if logged in
+    } catch (authError) {
+        // This catch is SILENT because we expect it to fail for new users
+        console.log("No active session, ready to sign up.");
+    }
 
+    // 2. The Main Signup Logic (One single try block)
     try {
-        // ID.unique() is usually used, but we will use 'username' as the ID
-        // Format: account.create(ID, email, password, name)
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const fullname = document.getElementById('fullname').value;
+        const username = document.getElementById('username').value;
+
+        // Create account
         await account.create(username, email, password, fullname);
         
-        alert("Account created successfully!");
-        // Now log them in automatically
-        await account.createEmailSession(email, password);
+        // Log in
+        await account.createEmailPasswordSession(email, password);
+        
         window.location.href = 'dashboard.html';
     } catch (error) {
+        // This catches ANY error in step 2 (missing fields, weak password, etc.)
         alert("Signup failed: " + error.message);
     }
 }
