@@ -10,11 +10,20 @@ const account = new Account(client);
 async function handleSignup() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const fullname = document.getElementById('fullname').value;
+    const username = document.getElementById('username').value;
+
     try {
-        await account.create(ID.unique(), email, password);
-        alert("Account created! Now you can log in.");
+        // ID.unique() is usually used, but we will use 'username' as the ID
+        // Format: account.create(ID, email, password, name)
+        await account.create(username, email, password, fullname);
+        
+        alert("Account created successfully!");
+        // Now log them in automatically
+        await account.createEmailSession(email, password);
+        window.location.href = 'dashboard.html';
     } catch (error) {
-        alert(error.message);
+        alert("Signup failed: " + error.message);
     }
 }
 
