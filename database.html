@@ -832,11 +832,7 @@
 
         function formatDate(item) {
             if (!item.visit_year && !item.visit_month && !item.visit_day) return null;
-            
-            const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-            // Fix: ensure integer parsing
-            const mIndex = parseInt(item.visit_month) - 1;
-            const m = (mIndex >= 0 && mIndex < 12) ? months[mIndex] : ""; 
+            const m = item.visit_month || "";
             const d = item.visit_day ? item.visit_day + "," : "";
             const y = item.visit_year || "";
             
