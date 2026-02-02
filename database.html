@@ -194,12 +194,7 @@
         .stamp-card {
             break-inside: avoid;
             margin-bottom: 30px;
-            transition: transform 0.2s ease;
             position: relative;
-            opacity: 1;
-        }
-        @keyframes cardFadeIn {
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .stamp-card:hover {
@@ -323,8 +318,7 @@
         }
 
         /* --- Modal Styles --- */
-        #modal-overlay {
-            
+        #modal-overlay { 
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -460,7 +454,6 @@
                 object-position: top;
             }
             .modal-right { 
-                padding: 25px 25px; /* Equal padding left and right */
                 justify-content: flex-start;
             }
             #fullname { font-size: 24pt; }
@@ -853,9 +846,6 @@
             const div = document.createElement('div');
             div.className = 'stamp-card';
             div.style.setProperty('--card-theme', item.theme_color);
-            
-            // Waterfall animation: stagger based on index
-            div.style.animationDelay = `${index * 0.05}s`;
 
             // Fix (1): Ensure click event works securely
             div.addEventListener('click', function() {
