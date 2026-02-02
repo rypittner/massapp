@@ -871,13 +871,6 @@
             const yearStr = item.visit_year || '';
 
             if (item.img_url) {
-                // IMAGE STAMP
-                // Fix (2): Wait for load
-                const img = new Image();
-                img.src = item.img_url;
-                img.onload = () => {
-                    div.classList.add('is-loaded');
-                };
 
                 div.innerHTML = `
                     <div class="stamp">
@@ -895,7 +888,6 @@
                 `;
             } else {
                 // JOURNAL STAMP (Text only, load immediately)
-                setTimeout(() => div.classList.add('is-loaded'), 10); // Slight tick to trigger anim
                 
                 div.innerHTML = `
                     <div class="stamp-journal">
