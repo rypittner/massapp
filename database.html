@@ -850,44 +850,44 @@
             const left = document.getElementById('modal-image-container');
             const cityBtn = document.getElementById('modal-city-btn');
             
+            if (!modal || !cityBtn) return; // Safety check
+        
             // Set Color Theme
             modal.style.setProperty('--modal-theme', item.theme_color);
             
-            // Updated Location Pill Styling (Lighter background, colored text)
-            // Using mix to lighten the theme color significantly
+            // Updated Location Pill Styling
             cityBtn.style.backgroundColor = `color-mix(in srgb, ${item.theme_color}, white 90%)`;
             cityBtn.style.color = item.theme_color;
             cityBtn.style.borderColor = item.theme_color;
-
+        
             // Left Content (Image or Ink Stamp)
             if (item.img_url) {
                 left.innerHTML = `<img src="${item.img_url}" alt="${item.name}">`;
             } else {
-                // New Ink Stamp style for modal fallback
                 const locationLabel = item.country_code === 'US' ? item.state_code : item.country_code;
                 left.innerHTML = `
-                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color}; transform:scale(1.5);">
+                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color}; transform:scale(1.2); max-width: 150px;">
                     ${locationLabel || 'LOG'}
                 </div>`;
             }
-
+        
             // Right Content
             document.getElementById('modal-title').innerText = item.name;
             document.getElementById('modal-title').style.color = item.theme_color;
             
-            // Fix Date Logic (Hide if null)
+            // Date Logic
             const dateStr = formatDate(item);
             const dateElem = document.getElementById('modal-meta');
-            if (dateStr) {
+            if (dateStr && !dateStr.includes("Undefined")) {
                 dateElem.innerText = dateStr;
                 dateElem.style.display = 'block';
             } else {
                 dateElem.style.display = 'none';
             }
-
-            // Fix Notes Logic (Hide if null)
+        
+            // Notes Logic
             const noteElem = document.getElementById('modal-note');
-            if (item.notes) {
+            if (item.notes && item.notes.trim() !== "") {
                 noteElem.innerText = item.notes;
                 noteElem.style.display = 'block';
             } else {
@@ -904,12 +904,12 @@
                 if (item.country_code) locString += `, ${item.country_code}`;
             }
             cityBtn.innerText = locString;
-
-            // Maps Link
-            const addressString = `${item.name}, ${item.address || ''} ${item.city || ''}`;
+        
+            // Corrected Maps Link logic
+            const addressString = `${item.name}, ${item.city || ''} ${item.state_code || ''}`;
             const mapQuery = encodeURIComponent(addressString);
             cityBtn.href = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-
+        
             modal.style.display = 'flex';
         }
 
