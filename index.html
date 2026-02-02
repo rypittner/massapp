@@ -1,27 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Appwrite App</title>
-
-    <link rel="stylesheet" href="style.css">
+<title>Welcome to MassPort</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Yrsa:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+      --primary-green: #064e3b; /*green*/
+    }
+h1{
+	font-family:Yrsa;
+	color:var(--primary-green);
+    font-weight:500;
+    font-size:3rem;
+    margin:0;
+}
+p{font-family:Inter;
+margin-top:0;}
+body {
+    margin: 0; 
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;     /* Centers vertically */
+    min-height: 100vh;       /* Sets height to 100% of the viewport height */
+  }
+  /* 2. Style the container if needed */
+  .center {
+    text-align: center;      /* Centers the text and buttons inside the div */
+  }
+  
+  button{
+  font-size:12pt;
+  font-family:Inter;
+  width:350px;
+  height:50px;
+  margin:8px;
+  font-weight:700;
+  border: none;          /* Removes the default stroke/outline */
+  border-radius: 8px;    /* Rounds the edges (use 25px for pill shape) */
+  cursor: pointer;       /* Makes the mouse turn into a hand on hover */
+  }
+  
+  .solid-button{
+	background-color:var(--primary-green);
+    color:white;
+  }
+  
+  .outline-button{
+    border: 1px solid var(--primary-green);  
+    background-color: transparent;           /* Makes it a true outline button */
+  color: var(--primary-green);
+  }
+</style>
 </head>
 <body>
-
-    <div id="auth-container">
-        <h2>Login or Signup</h2>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="handleSignup()">Sign Up</button>
-        <button onclick="handleLogin()">Log In</button>
-    </div>
-
-    <div id="app-content" style="display:none;">
-        <h2>Welcome to the App!</h2>
-        <button onclick="handleLogout()">Log Out</button>
-    </div>
+<div class="center">
+<h1>MassPort</h1>
+<p>Sign in to view your sacred journal.</p>
+<button class="solid-button" onclick="window.location.href='login';">Sign In</button><br>
+<button class="outline-button" onclick="window.location.href='signup';">Create Account</button>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
-    <script src="app.js"></script>
+	<script src="app.js"></script>
 </body>
+
 </html>
