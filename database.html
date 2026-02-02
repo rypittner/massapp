@@ -121,75 +121,70 @@
             cursor: pointer;
         }
 
-        /* --- Grid & Stamp Styles --- */
+        /* --- Masonry Grid Layout --- */
         #stamps-container {
             padding: 0 50px 100px 50px;
+            column-count: 4; /* Desktop default */
+            column-gap: 30px;
         }
 
-        .group-section {
-            margin-bottom: 60px;
+        /* Responsive Columns */
+        @media (max-width: 1200px) {
+            #stamps-container { column-count: 3; }
+        }
+        @media (max-width: 900px) {
+            #stamps-container { column-count: 2; }
+        }
+        @media (max-width: 600px) {
+            #stamps-container { column-count: 1; }
         }
 
-        /* Masonry Grid Layout within Groups */
-        .stamp-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-            align-items: start;
-            margin-top: 30px;
-        }
-
-        /* Ink Stamp (Header) Styles */
-        .state-ink-wrapper {
+        /* --- Ink Stamp (Dotted Circle) --- */
+        .ink-stamp-node {
+            break-inside: avoid;
+            margin-bottom: 30px;
+            width: 100%;
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+        }
+
+        .ink-stamp-circle {
             width: 100%;
-        }
-
-        .state-ink-wrapper:hover .ink-stamp-inner { 
-            border-color: var(--ink-hover) !important; 
-            color: var(--ink-hover) !important;
-        }
-
-        .ink-stamp { 
-            width: 180px;
-            aspect-ratio: 7/9; 
-            mix-blend-mode: multiply; 
-            opacity: 0.8;
-            font-family: 'Special Elite', cursive; 
-            color: var(--ink-gray); 
-            text-align: center;
-            display: flex; 
-            align-items: center; 
+            aspect-ratio: 1 / 1;
+            max-width: 250px; /* Prevent massive circles on single column */
+            border: 4px dotted var(--ink-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            transform: rotate(var(--ink-rot));
-            transition: color 0.3s ease;
+            color: var(--ink-gray);
+            font-family: 'Special Elite', cursive;
+            font-size: 3rem;
+            text-transform: uppercase;
+            text-align: center;
+            opacity: 0.8;
+            mix-blend-mode: multiply;
+            padding: 20px;
+            box-sizing: border-box;
+            transform: rotate(-5deg);
         }
 
-        .ink-stamp-inner { 
-            width: 85%; 
-            height: 85%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 10px;
-            border-width: 4px; 
-            border-color: var(--ink-gray);
-            transition: border-color 0.3s ease, color 0.3s ease;
-        }
-
-        .ink-abbr { font-size: 32px; line-height: 1; margin-top: 5px; }
-        .ink-sep { font-size: 10px; margin: 5px 0; opacity: 0.6; letter-spacing: 2px;}
-        .ink-full { font-size: 14px; line-height: 1.1; text-transform: uppercase; max-width: 100%; word-wrap: break-word;}
-
-        /* Individual Stamp Card Styles */
+        /* --- Individual Stamp Card Styles --- */
         .stamp-card {
+            break-inside: avoid; /* Essential for Masonry */
+            margin-bottom: 30px; /* Vertical gap in Masonry */
             transition: transform 0.2s ease;
+            opacity: 0; /* For fade-in animation */
+            animation: fadeIn 0.6s ease forwards;
         }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
         .stamp-card:hover {
             transform: translateY(-5px);
+            z-index: 2;
         }
 
         /* Image Stamp Type */
@@ -284,6 +279,7 @@
             flex-direction: column;
             gap: 0.5rem;
             position: relative;
+            min-height: 180px; /* Increased height */
         }
 
         .h-city-journal {
@@ -297,7 +293,7 @@
             font-size: 0.9rem;
             color: #555;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 5; /* increased visible lines */
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-top: 5px;
@@ -371,8 +367,10 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            justify-content: center; /* Center Vertically on Desktop */
         }
 
+        /* Modal Location Pill (Styled like Journal) */
         .modal-city {
             display: inline-block;
             font-family: 'Inter', sans-serif;
@@ -386,6 +384,9 @@
             width: fit-content;
             text-decoration: none;
             transition: opacity 0.2s;
+            /* Journal style defaults, overwritten by JS colors */
+            background: rgba(0,0,0,0.1); 
+            border: 1px solid currentColor;
         }
         .modal-city:hover { opacity: 0.8; }
 
@@ -416,10 +417,21 @@
         /* Mobile Responsive */
         @media (max-width: 768px) {
             #main, #controls, #stamps-container { padding-left: 20px; padding-right: 20px; }
-            #modal-content { flex-direction: column; height: auto; max-height: 90vh; overflow-y: auto;}
+            
+            #modal-content { 
+                flex-direction: column; 
+                height: auto; 
+                max-height: 85vh; /* Prevent cut off */
+                width: 90vw; /* Fix bleeding */
+                overflow-y: auto;
+            }
             .modal-left { height: 250px; flex: none; }
-            .modal-right { padding: 25px; }
+            .modal-right { 
+                padding: 25px; 
+                justify-content: flex-start; /* Reset vertical alignment for scroll */
+            }
             #fullname { font-size: 28pt; }
+            .ink-stamp-circle { max-width: 150px; font-size: 2rem; }
         }
     </style>
 </head>
@@ -450,7 +462,7 @@
         <select id="sort-order" onchange="applyFilters()">
             <option value="date-added">Date Added</option>
             <option value="az">Name (A-Z)</option>
-            <option value="recent">Visit Date (Recent)</option>
+            <option value="recent">By Year</option>
             <option value="location" selected>Location</option>
         </select>
     </div>
@@ -476,10 +488,10 @@
     <script>
         // --- 1. CONFIGURATION ---
         const CLIENT_CONFIG = {
-            ENDPOINT: 'https://sfo.cloud.appwrite.io/v1', // Replace with your endpoint
-            PROJECT_ID: '69567e050003ca751cbe',           // Replace
-            DATABASE_ID: '695680440027bfa5b520',         // Replace
-            COLLECTION_ID: 'stamps'      // Replace
+            ENDPOINT: 'https://sfo.cloud.appwrite.io/v1', 
+            PROJECT_ID: '69567e050003ca751cbe',           
+            DATABASE_ID: '695680440027bfa5b520',         
+            COLLECTION_ID: 'stamps'      
         };
 
         const THEMES = ['#4478A2','#C65265','#D78143','#297381','#89974F','#DAAD60','#757498','#AA7876','#D7A995','#6E917A'];
@@ -495,49 +507,39 @@
 
         let currentUser = null;
         let allStamps = [];
-        let viewUserId = null; // ID of the user whose stamps we are viewing
+        let viewUserId = null; 
 
         // --- 3. AUTH & USER LOGIC ---
         async function init() {
             try {
-                // Check if URL has hash for specific user
-                const hash = window.location.hash.substring(1); // Remove #
+                const hash = window.location.hash.substring(1); 
                 
-                // Get Logged In User
                 currentUser = await account.get();
-                
-                // Determine which data to show
                 viewUserId = hash ? hash : currentUser.$id;
 
-                // Update UI Header
                 if (!hash || hash === currentUser.$id) {
                     updateHeader(currentUser);
                 } else {
-                    // We are viewing someone else. 
-                    // Ideally, we'd fetch their profile, but Appwrite Client SDK usually limits getting other user objects.
-                    // We will infer name from the stamps later or show generic text.
                     updateHeader({ name: 'Guest View', email: 'User: ' + hash, $id: hash }, true);
                 }
 
-                // Fetch Stamps
                 await fetchStamps();
 
             } catch (error) {
                 console.error("Auth Error:", error);
-                window.location.href = "index.html"; // Redirect to login if auth fails
+                window.location.href = "index.html"; 
             }
         }
 
         function updateHeader(user, isGuest = false) {
             document.getElementById('fullname').innerText = user.name || "Unknown User";
             
-            // Avatar Initials
             const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '??';
             document.getElementById('avatar').innerText = initials;
 
-            // Info text (updated later with count)
-            const handle = user.email || user.$id;
-            document.getElementById('user-info').innerText = `${isGuest ? '' : '@'}${handle} • Loading stamps...`;
+            // Display Name instead of Email/Handle
+            const displayName = user.name || "User";
+            document.getElementById('user-info').innerText = `${displayName} • Loading stamps...`;
         }
 
         async function handleLogout() {
@@ -552,24 +554,26 @@
         // --- 4. DATA FETCHING ---
         async function fetchStamps() {
             try {
-                // Query database for stamps owned by viewUserId
+                // Increased limit to 5000 to ensure all stamps load
                 const response = await databases.listDocuments(
                     CLIENT_CONFIG.DATABASE_ID,
                     CLIENT_CONFIG.COLLECTION_ID,
                     [
                         Query.equal('user_id', viewUserId),
-                        Query.limit(100) // Adjust limit or add pagination as needed
+                        Query.limit(5000) 
                     ]
                 );
 
                 allStamps = response.documents.map(doc => {
-                    // Normalize data structure if needed
+                    // Logic for sortable date
+                    const y = doc.visit_year || 0;
+                    const m = doc.visit_month ? doc.visit_month - 1 : 0;
+                    const d = doc.visit_day || 1;
+                    
                     return {
                         ...doc,
-                        // Ensure theme exists
-                        theme_color: doc.theme_color || THEMES[Math.floor(Math.random() * THEMES.length)],
-                        // Helper for date
-                        fullDate: new Date(doc.visit_year, doc.visit_month ? doc.visit_month - 1 : 0, doc.visit_day || 1),
+                        fullDate: new Date(y, m, d),
+                        // Helper for location sorting
                         locationKey: doc.country_code === 'US' ? (doc.state_code || 'US') : (doc.country_code || 'INTL')
                     };
                 });
@@ -579,7 +583,7 @@
                 document.getElementById('user-info').innerText = `${infoText} • ${allStamps.length} stamps`;
 
                 setupFilters();
-                applyFilters(); // Initial Render
+                applyFilters(); 
 
             } catch (error) {
                 console.error("Fetch Error:", error);
@@ -589,7 +593,7 @@
 
         // --- 5. FILTERS & SORTING ---
         function setupFilters() {
-            // Populate Year Filter
+            // Populate Year Filter (Ensure all years including future/2026 are caught)
             const years = [...new Set(allStamps.map(s => s.visit_year))].sort().reverse();
             const yearSelect = document.getElementById('filter-year');
             years.forEach(y => {
@@ -605,22 +609,27 @@
             const locSelect = document.getElementById('filter-location');
             
             // US States
-            const usStamps = allStamps.filter(s => s.country_code === 'US' || !s.country_code); // Default to US if missing
+            const usStamps = allStamps.filter(s => s.country_code === 'US' || !s.country_code); 
             const states = {};
             usStamps.forEach(s => {
                 const code = s.state_code || 'Other';
                 const name = s.full_state_name || code;
-                if(!states[code]) states[code] = { name: name, count: 0 };
-                states[code].count++;
+                if(!states[code]) states[code] = name;
             });
 
             if (Object.keys(states).length > 0) {
+                // Add Generic "United States"
+                const usOpt = document.createElement('option');
+                usOpt.value = 'US_ALL';
+                usOpt.innerText = 'United States (All)';
+                locSelect.appendChild(usOpt);
+
                 const usGroup = document.createElement('optgroup');
-                usGroup.label = "United States";
+                usGroup.label = "States";
                 Object.keys(states).sort().forEach(code => {
                     const opt = document.createElement('option');
                     opt.value = code;
-                    opt.innerText = `${states[code].name} (${states[code].count})`;
+                    opt.innerText = states[code]; // Removed count
                     usGroup.appendChild(opt);
                 });
                 locSelect.appendChild(usGroup);
@@ -631,18 +640,23 @@
             const countries = {};
             intlStamps.forEach(s => {
                 const code = s.country_code;
-                const name = code; // Or map code to full name if available in DB
-                if(!countries[code]) countries[code] = { name: name, count: 0 };
-                countries[code].count++;
+                const name = code; // Ideally mapped to full name, using code for now
+                if(!countries[code]) countries[code] = name;
             });
 
             if (Object.keys(countries).length > 0) {
+                // Add Generic "International"
+                const intOpt = document.createElement('option');
+                intOpt.value = 'INTL_ALL';
+                intOpt.innerText = 'International (All)';
+                locSelect.appendChild(intOpt);
+
                 const intGroup = document.createElement('optgroup');
-                intGroup.label = "International";
+                intGroup.label = "Countries";
                 Object.keys(countries).sort().forEach(code => {
                     const opt = document.createElement('option');
-                    opt.value = code; // Use country code as value
-                    opt.innerText = `${countries[code].name} (${countries[code].count})`;
+                    opt.value = code;
+                    opt.innerText = countries[code]; // Removed count
                     intGroup.appendChild(opt);
                 });
                 locSelect.appendChild(intGroup);
@@ -658,11 +672,17 @@
             let filtered = allStamps.filter(item => {
                 let locMatch = true;
                 if (locFilter !== 'all') {
-                    // If filter is a US state code (2 chars) or country code
-                    if (item.country_code === 'US' || !item.country_code) {
-                        locMatch = item.state_code === locFilter;
+                    if (locFilter === 'US_ALL') {
+                        locMatch = (item.country_code === 'US' || !item.country_code);
+                    } else if (locFilter === 'INTL_ALL') {
+                        locMatch = (item.country_code && item.country_code !== 'US');
                     } else {
-                        locMatch = item.country_code === locFilter;
+                        // Specific State or Country Code
+                        if (item.country_code === 'US' || !item.country_code) {
+                            locMatch = item.state_code === locFilter;
+                        } else {
+                            locMatch = item.country_code === locFilter;
+                        }
                     }
                 }
 
@@ -677,10 +697,9 @@
             // 2. Sort
             filtered.sort((a, b) => {
                 if (sortOrder === 'date-added') return new Date(b.$createdAt) - new Date(a.$createdAt);
-                if (sortOrder === 'recent') return b.fullDate - a.fullDate;
+                if (sortOrder === 'recent') return b.fullDate - a.fullDate; // Now "By Year" (uses date object)
                 if (sortOrder === 'az') return a.name.localeCompare(b.name);
                 if (sortOrder === 'location') {
-                    // Sort by State/Country Code then Name
                     const locA = a.locationKey;
                     const locB = b.locationKey;
                     return locA.localeCompare(locB) || a.name.localeCompare(b.name);
@@ -688,11 +707,11 @@
                 return 0;
             });
 
-            renderGrid(filtered, sortOrder);
+            renderMasonryGrid(filtered, sortOrder);
         }
 
-        // --- 6. RENDERING ---
-        function renderGrid(data, sortOrder) {
+        // --- 6. RENDERING (MASONRY) ---
+        function renderMasonryGrid(data, sortOrder) {
             const container = document.getElementById('stamps-container');
             container.innerHTML = '';
 
@@ -701,75 +720,74 @@
                 return;
             }
 
-            // Grouping Logic
-            let groups = {};
-            
-            if (sortOrder === 'location') {
-                // Group by State/Country
-                data.forEach(item => {
-                    const key = item.locationKey;
-                    if (!groups[key]) groups[key] = { 
-                        title: item.full_state_name || item.country_code || key, 
-                        code: key, 
-                        items: [] 
-                    };
-                    groups[key].items.push(item);
-                });
-            } else if (sortOrder === 'recent' || document.getElementById('filter-year').value !== 'all') {
-                // Group by Year
-                data.forEach(item => {
-                    const key = item.visit_year || 'Unknown';
-                    if (!groups[key]) groups[key] = { title: key, code: key, items: [] };
-                    groups[key].items.push(item);
-                });
-            } else {
-                // No grouping (just one big group)
-                groups['all'] = { title: 'All Stamps', code: 'ALL', items: data };
-            }
+            // Group Logic to inject headers
+            let renderList = [];
+            let currentGroup = null;
 
-            // Render Groups
-            Object.keys(groups).forEach(key => {
-                const group = groups[key];
-                const wrapper = document.createElement('div');
-                wrapper.className = 'group-section';
+            data.forEach((item) => {
+                let groupKey = '';
+                let groupLabel = '';
+                let isYear = false;
 
-                // Add Ink Stamp Header (Only if sorted by location or filtered/sorted by year)
-                // If "Date Added" or "A-Z", we usually skip headers unless user specifically filtered by something.
-                // Based on prompt, Ink Stamps appear before "each set".
-                
-                if (sortOrder === 'location' || sortOrder === 'recent') {
-                    const inkHtml = createInkStamp(group.title, group.code, sortOrder === 'location');
-                    wrapper.innerHTML += inkHtml;
+                // Determine Grouping based on logic
+                if (sortOrder === 'location') {
+                    groupKey = item.locationKey;
+                    groupLabel = item.country_code === 'US' ? item.state_code : item.country_code;
+                } else if (sortOrder === 'recent') {
+                    // Sort by Year -> Group by Year
+                    groupKey = item.visit_year || 'Unknown';
+                    groupLabel = groupKey;
+                    isYear = true;
+                } else {
+                    // If Date Added or AZ, we check Filters to see if we should show a header
+                    const yearFilter = document.getElementById('filter-year').value;
+                    const locFilter = document.getElementById('filter-location').value;
+
+                    if (yearFilter !== 'all' && locFilter === 'all') {
+                        // Filtered by year only -> Show Year
+                        groupKey = item.visit_year;
+                        groupLabel = groupKey;
+                        isYear = true;
+                    } else if (locFilter !== 'all') {
+                         // Filtered by location -> Show Location Abbr
+                         groupKey = item.locationKey;
+                         groupLabel = item.country_code === 'US' ? item.state_code : item.country_code;
+                    }
                 }
 
-                // Grid Container
-                const grid = document.createElement('div');
-                grid.className = 'stamp-grid';
+                // If grouping changed, add a header object
+                if (groupKey && groupKey !== currentGroup) {
+                    currentGroup = groupKey;
+                    renderList.push({ type: 'header', label: groupLabel });
+                }
 
-                group.items.forEach(item => {
-                    grid.appendChild(createStampCard(item));
-                });
+                // Add item
+                renderList.push({ type: 'item', data: item });
+            });
 
-                wrapper.appendChild(grid);
-                container.appendChild(wrapper);
+            // Render Flattened List
+            // We use a sequential index for coloring to ensure no touching colors
+            let colorIndex = 0;
+
+            renderList.forEach(obj => {
+                if (obj.type === 'header') {
+                    container.innerHTML += createInkStamp(obj.label);
+                } else {
+                    // Assign Color sequentially
+                    const color = THEMES[colorIndex % THEMES.length];
+                    obj.data.theme_color = color; 
+                    colorIndex++;
+                    container.appendChild(createStampCard(obj.data));
+                }
             });
         }
 
-        function createInkStamp(title, code, isLocation) {
-            // Randomize slightly for organic look
-            const rot = Math.floor(Math.random() * 20) - 10; 
-            const bRadius = isLocation ? "50%" : "4px"; // Circle for states, Box for years
-            const iconName = isLocation ? "public" : "calendar_month";
-            
+        function createInkStamp(text) {
+            // Dotted circle, abbreviated text in center
             return `
-            <div class="state-ink-wrapper">
-                <div class="ink-stamp" style="--ink-rot: ${rot}deg">
-                    <div class="ink-stamp-inner" style="border-radius: ${bRadius};">
-                        <span class="material-symbols-rounded ink-icon" style="font-size:36px;">${iconName}</span>
-                        <div class="ink-abbr">${code.substring(0,4)}</div>
-                        <div class="ink-sep">- - - - - -</div>
-                        <div class="ink-full">${title}</div>
-                    </div>
+            <div class="ink-stamp-node">
+                <div class="ink-stamp-circle">
+                    ${text}
                 </div>
             </div>`;
         }
@@ -789,7 +807,7 @@
                         <div class="stamp-content-wrapper">
                             <div class="stamp-image">
                                 <img src="${item.img_url}" loading="lazy" alt="${item.name}">
-                                <div class="h-year">${dateStr}</div>
+                                ${dateStr ? `<div class="h-year">${dateStr}</div>` : ''}
                             </div>
                             <div class="stamp-overlay-text">
                                 <div class="h-city">${item.city || 'Unknown'}</div>
@@ -805,7 +823,7 @@
                         <div class="h-city h-city-journal">${item.city || 'Unknown'}</div>
                         <div class="h-church">${item.name}</div>
                         ${item.notes ? `<div class="h-note">${item.notes}</div>` : ''}
-                        <div class="h-year" style="position:relative; top:0; right:0; background:none; padding:0; margin-top:auto; text-align:right;">${dateStr}</div>
+                        ${dateStr ? `<div class="h-year" style="position:relative; top:0; right:0; background:none; padding:0; margin-top:auto; text-align:right;">${dateStr}</div>` : ''}
                     </div>
                 `;
             }
@@ -813,10 +831,17 @@
         }
 
         function formatDate(item) {
+            if (!item.visit_year && !item.visit_month && !item.visit_day) return null;
+            
             const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-            const m = item.visit_month ? months[item.visit_month - 1] : "";
+            // Fix: ensure integer parsing
+            const mIndex = parseInt(item.visit_month) - 1;
+            const m = (mIndex >= 0 && mIndex < 12) ? months[mIndex] : ""; 
             const d = item.visit_day ? item.visit_day + "," : "";
-            return `${m} ${d} ${item.visit_year}`; 
+            const y = item.visit_year || "";
+            
+            if (!m && !y) return null;
+            return `${m} ${d} ${y}`.trim(); 
         }
 
         // --- 7. MODAL LOGIC ---
@@ -827,38 +852,61 @@
             
             // Set Color Theme
             modal.style.setProperty('--modal-theme', item.theme_color);
-            cityBtn.style.backgroundColor = item.theme_color;
-            cityBtn.style.color = "white";
+            
+            // Updated Location Pill Styling (Lighter background, colored text)
+            // Using mix to lighten the theme color significantly
+            cityBtn.style.backgroundColor = `color-mix(in srgb, ${item.theme_color}, white 90%)`;
+            cityBtn.style.color = item.theme_color;
+            cityBtn.style.borderColor = item.theme_color;
 
             // Left Content (Image or Ink Stamp)
             if (item.img_url) {
                 left.innerHTML = `<img src="${item.img_url}" alt="${item.name}">`;
             } else {
-                // Render a large ink stamp if no image
-                const rot = -5;
-                const locationKey = item.country_code === 'US' ? item.state_code : item.country_code;
-                const locationName = item.full_state_name || item.country_code;
+                // New Ink Stamp style for modal fallback
+                const locationLabel = item.country_code === 'US' ? item.state_code : item.country_code;
                 left.innerHTML = `
-                    <div class="ink-stamp" style="--ink-rot: ${rot}deg; transform: scale(1.5);">
-                        <div class="ink-stamp-inner" style="border-radius: 50%;">
-                            <span class="material-symbols-rounded ink-icon" style="font-size:36px;">location_on</span>
-                            <div class="ink-abbr">${locationKey || 'LOG'}</div>
-                            <div class="ink-sep">- - - - - -</div>
-                            <div class="ink-full">${locationName || 'Journal'}</div>
-                        </div>
-                    </div>`;
+                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color}; transform:scale(1.5);">
+                    ${locationLabel || 'LOG'}
+                </div>`;
             }
 
             // Right Content
             document.getElementById('modal-title').innerText = item.name;
             document.getElementById('modal-title').style.color = item.theme_color;
-            document.getElementById('modal-meta').innerText = formatDate(item);
-            document.getElementById('modal-note').innerText = item.notes || "No notes added for this visit.";
             
+            // Fix Date Logic (Hide if null)
+            const dateStr = formatDate(item);
+            const dateElem = document.getElementById('modal-meta');
+            if (dateStr) {
+                dateElem.innerText = dateStr;
+                dateElem.style.display = 'block';
+            } else {
+                dateElem.style.display = 'none';
+            }
+
+            // Fix Notes Logic (Hide if null)
+            const noteElem = document.getElementById('modal-note');
+            if (item.notes) {
+                noteElem.innerText = item.notes;
+                noteElem.style.display = 'block';
+            } else {
+                noteElem.style.display = 'none';
+            }
+            
+            // Fix duplicate state text
+            let locString = item.city || '';
+            if (item.country_code === 'US') {
+                if (item.state_code && !locString.includes(item.state_code)) {
+                    locString += `, ${item.state_code}`;
+                }
+            } else {
+                if (item.country_code) locString += `, ${item.country_code}`;
+            }
+            cityBtn.innerText = locString;
+
             // Maps Link
-            cityBtn.innerText = `${item.city}, ${item.state_code || item.country_code}`;
             const addressString = `${item.name}, ${item.address || ''} ${item.city || ''}`;
-            // Secure URL encoding
             const mapQuery = encodeURIComponent(addressString);
             cityBtn.href = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
