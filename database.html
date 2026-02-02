@@ -25,29 +25,39 @@
             color: #333;
         }
 
-        /* --- Header / User Profile Styles --- */
-        #main {
-            padding: 50px 50px 20px 50px;
+        /* --- Sticky Header --- */
+        #header-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--bg-color);
+            padding: 20px 50px;
+            border-bottom: 1px solid #dcdcdc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
         }
 
-        .header-content {
+        .header-left {
             display: flex;
             align-items: center;
         }
 
+        /* --- Avatar & User --- */
         #avatar {
             background: gray;
             border-radius: 50%;
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
             font-family: 'Inter', sans-serif;
             font-weight: 700;
-            font-size: 2rem;
-            border: 5px solid white;
+            font-size: 1.8rem;
+            border: 4px solid white;
             flex-shrink: 0;
             object-fit: cover;
         }
@@ -60,7 +70,7 @@
             font-family: 'Yrsa', serif;
             font-weight: 500;
             margin: 0;
-            font-size: 36pt;
+            font-size: 28pt;
             line-height: 1.1;
         }
 
@@ -69,17 +79,19 @@
             text-transform: uppercase;
             letter-spacing: 0.6px;
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.8;
         }
 
         .logout {
+            /* Now part of the header layout on mobile, or absolute on desktop if desired. 
+               Keeping it simple: Absolute top right relative to window, z-index above header */
             position: fixed;
             top: 20px;
             right: 20px;
-            font-size: 10pt;
+            font-size: 9pt;
             font-family: 'Inter', sans-serif;
-            padding: 8px 16px;
+            padding: 6px 12px;
             font-weight: 600;
             background: white;
             border: 1px solid #ddd;
@@ -88,7 +100,7 @@
             color: black;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: all 0.2s;
-            z-index: 100;
+            z-index: 2000;
         }
 
         .logout:hover {
@@ -96,44 +108,53 @@
             transform: translateY(-1px);
         }
 
-        hr {
-            border: none;
-            border-bottom: 1px solid #dcdcdc;
-            margin: 30px 0;
-        }
-
-        /* --- Controls / Filters --- */
+        /* --- Controls (Moved to Header) --- */
         #controls {
-            padding: 0 50px 30px 50px;
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
 
         select {
-            padding: 10px 15px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 50px; /* Pill Shape */
             border: 1px solid #ccc;
-            background: white;
+            background: #fcfcfc;
             font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            min-width: 150px;
+            font-size: 0.85rem;
+            min-width: 140px;
             cursor: pointer;
+            outline: none;
+            color: #666; /* Default grayed out look */
+            transition: all 0.2s;
+        }
+
+        /* Active Filter State */
+        select.active-filter {
+            border: 1px solid var(--primary-green);
+            color: #111;
+            background: white;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(6, 78, 59, 0.1);
         }
 
         /* --- Masonry Grid Layout --- */
         #stamps-container {
-            padding: 0 100px 100px 100px;
-            column-count: 5; /* Desktop default */
+            padding: 40px 50px 100px 50px;
+            column-count: 5; 
             column-gap: 30px;
         }
 
-        /* Responsive Columns */
         @media (max-width: 1200px) {
             #stamps-container { column-count: 3; }
         }
         @media (max-width: 900px) {
-            #stamps-container { column-count: 2; }
+            #header-container { flex-direction: column; align-items: flex-start; gap: 20px; padding: 20px; }
+            #controls { width: 100%; overflow-x: auto; padding-bottom: 5px; } /* Horizontal scroll for filters on tiny screens */
+            #stamps-container { column-count: 2; padding: 30px 20px; }
+            #avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+            #fullname { font-size: 24pt; }
+            .logout { top: 10px; right: 10px; }
         }
         @media (max-width: 600px) {
             #stamps-container { column-count: 1; }
@@ -151,7 +172,7 @@
         .ink-stamp-circle {
             width: 100%;
             aspect-ratio: 1 / 1;
-            max-width: 250px; /* Prevent massive circles on single column */
+            max-width: 200px; 
             border: 2px dashed var(--ink-gray);
             border-radius: 50%;
             display: flex;
@@ -159,27 +180,35 @@
             justify-content: center;
             color: var(--ink-gray);
             font-family: 'Yrsa', serif;
-            font-size: 4rem;
+            font-size: 3.5rem;
             text-transform: uppercase;
             text-align: center;
             opacity: 0.5;
             mix-blend-mode: multiply;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
             transform: rotate(-5deg);
         }
 
         /* --- Individual Stamp Card Styles --- */
         .stamp-card {
-            break-inside: avoid; /* Essential for Masonry */
-            margin-bottom: 30px; /* Vertical gap in Masonry */
+            break-inside: avoid;
+            margin-bottom: 30px;
             transition: transform 0.2s ease;
-            opacity: 0; /* For fade-in animation */
-            animation: fadeIn 0.6s ease forwards;
+            position: relative;
+            
+            /* Initial State for Animation */
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
+        /* Animation Class applied via JS when loaded */
+        .stamp-card.is-loaded {
+            animation: cardFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes cardFadeIn {
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .stamp-card:hover {
@@ -222,6 +251,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .h-year {
@@ -281,7 +311,7 @@
             flex-direction: column;
             gap: 0.5rem;
             position: relative;
-            min-height: 100px; /* Increased height */
+            min-height: 100px;
         }
 
         .h-city-journal {
@@ -295,7 +325,7 @@
             font-size: 0.9rem;
             color: #555;
             display: -webkit-box;
-            -webkit-line-clamp: 5; /* increased visible lines */
+            -webkit-line-clamp: 5;
             -webkit-box-orient: vertical;
             overflow: hidden;
             margin-top: 5px;
@@ -318,7 +348,8 @@
             background: #f2eeea;
             width: 900px;
             max-width: 95vw;
-            height: 600px;
+            /* Auto height to fit content, but capped */
+            height: auto;
             max-height: 90vh;
             border-radius: 12px;
             display: flex;
@@ -347,19 +378,21 @@
         #modal-close:hover { background: white; }
 
         .modal-left {
-            flex: 1.2;
+            flex: 1.5; /* Give image more space */
             background: #ddd;
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 300px; 
         }
 
         .modal-left img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .modal-right {
@@ -369,10 +402,9 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            justify-content: center; /* Center Vertically on Desktop */
+            justify-content: center;
         }
 
-        /* Modal Location Pill (Styled like Journal) */
         .modal-city {
             display: inline-block;
             font-family: 'Inter', sans-serif;
@@ -386,7 +418,6 @@
             width: fit-content;
             text-decoration: none;
             transition: opacity 0.2s;
-            /* Journal style defaults, overwritten by JS colors */
             background: rgba(0,0,0,0.1); 
             border: 1px solid currentColor;
         }
@@ -418,22 +449,35 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            #main, #controls, #stamps-container { padding-left: 20px; padding-right: 20px; }
-            
             #modal-content { 
                 flex-direction: column; 
-                height: auto; 
-                max-height: 85vh; /* Prevent cut off */
-                width: 90vw; /* Fix bleeding */
+                max-height: 85vh; 
+                width: 90vw; 
                 overflow-y: auto;
             }
-            .modal-left { height: 250px; flex: none; }
-            .modal-right { 
-                padding: 25px; 
-                justify-content: flex-start; /* Reset vertical alignment for scroll */
+            .modal-left { 
+                height: 300px; /* Fixed height for header image */
+                flex: none; 
             }
-            #fullname { font-size: 28pt; }
+            .modal-left img {
+                /* On mobile, if tall, show more content by fitting cover nicely */
+                object-fit: cover; 
+                object-position: top;
+            }
+            .modal-right { 
+                padding: 25px 25px; /* Equal padding left and right */
+                justify-content: flex-start;
+            }
+            #fullname { font-size: 24pt; }
             .ink-stamp-circle { max-width: 150px; font-size: 2rem; }
+            
+            /* Enhanced Placeholder for Modal Mobile */
+            #modal-image-container .ink-stamp-circle {
+                transform: scale(1.5) rotate(-10deg) !important;
+                max-width: 80% !important;
+                font-size: 3rem !important;
+                border-width: 4px;
+            }
         }
     </style>
 </head>
@@ -441,32 +485,32 @@
 
     <button class="logout" onclick="handleLogout()">Log Out</button>
 
-    <div id="main">
-        <div class="header-content">
+    <div id="header-container">
+        <div class="header-left">
             <div id="avatar">...</div>
             <div id="user-details">
                 <h1 id="fullname">Loading...</h1>
                 <p id="user-info">@... • ... stamps</p>
             </div>
         </div>
-        <hr>
-    </div>
 
-    <div id="controls">
-        <select id="filter-location" onchange="applyFilters()">
-            <option value="all">All Locations</option>
+        <div id="controls">
+            <select id="sort-order" onchange="handleFilterChange()">
+                <option value="location" selected>Sort By:</option>
+                <option value="location">Location</option>
+                <option value="recent">Year</option>
+                <option value="az">Name (A-Z)</option>
+                <option value="date-added">Date Added</option>
             </select>
 
-        <select id="filter-year" onchange="applyFilters()">
-            <option value="all">All Years</option>
+            <select id="filter-location" onchange="handleFilterChange()">
+                <option value="all">All Locations</option>
             </select>
 
-        <select id="sort-order" onchange="applyFilters()">
-            <option value="date-added">Date Added</option>
-            <option value="az">Name (A-Z)</option>
-            <option value="recent">By Year</option>
-            <option value="location" selected>Location</option>
-        </select>
+            <select id="filter-year" onchange="handleFilterChange()">
+                <option value="all">All Years</option>
+            </select>
+        </div>
     </div>
 
     <div id="stamps-container">
@@ -477,7 +521,7 @@
         <div id="modal-content">
             <button id="modal-close" onclick="closeModal()">✕</button>
             <div class="modal-left" id="modal-image-container">
-                </div>
+            </div>
             <div class="modal-right">
                 <a id="modal-city-btn" class="modal-city" target="_blank" href="#">City, State</a>
                 <h2 id="modal-title" class="modal-title">Name</h2>
@@ -491,8 +535,8 @@
         // --- 1. CONFIGURATION ---
         const CLIENT_CONFIG = {
             ENDPOINT: 'https://sfo.cloud.appwrite.io/v1', 
-            PROJECT_ID: '69567e050003ca751cbe',           
-            DATABASE_ID: '695680440027bfa5b520',         
+            PROJECT_ID: '69567e050003ca751cbe',            
+            DATABASE_ID: '695680440027bfa5b520',          
             COLLECTION_ID: 'stamps'      
         };
 
@@ -539,7 +583,6 @@
             const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '??';
             document.getElementById('avatar').innerText = initials;
 
-            // Display Name instead of Email/Handle
             const displayName = user.name || "User";
             document.getElementById('user-info').innerText = `${displayName} • Loading stamps...`;
         }
@@ -556,7 +599,6 @@
         // --- 4. DATA FETCHING ---
         async function fetchStamps() {
             try {
-                // Increased limit to 5000 to ensure all stamps load
                 const response = await databases.listDocuments(
                     CLIENT_CONFIG.DATABASE_ID,
                     CLIENT_CONFIG.COLLECTION_ID,
@@ -567,20 +609,25 @@
                 );
 
                 allStamps = response.documents.map(doc => {
-                    // Logic for sortable date
                     const y = doc.visit_year || 0;
                     const m = doc.visit_month ? doc.visit_month - 1 : 0;
                     const d = doc.visit_day || 1;
+                    
+                    // Logic fix: "Vatican under US". 
+                    // If country_code is NOT US, we use state_code as Country Name.
+                    const isIntl = doc.country_code && doc.country_code !== 'US';
+                    const effectiveCountry = isIntl ? (doc.state_code || doc.country_code) : 'US';
                     
                     return {
                         ...doc,
                         fullDate: new Date(y, m, d),
                         // Helper for location sorting
-                        locationKey: doc.country_code === 'US' ? (doc.state_code || 'US') : (doc.country_code || 'INTL')
+                        locationKey: isIntl ? effectiveCountry : (doc.state_code || 'US'),
+                        locationLabel: isIntl ? effectiveCountry : (doc.state_code || 'US'),
+                        isInternational: isIntl
                     };
                 });
 
-                // Update Stamp Count in Header
                 const infoText = document.getElementById('user-info').innerText.split('•')[0];
                 document.getElementById('user-info').innerText = `${infoText} • ${allStamps.length} stamps`;
 
@@ -595,7 +642,7 @@
 
         // --- 5. FILTERS & SORTING ---
         function setupFilters() {
-            // Populate Year Filter (Ensure all years including future/2026 are caught)
+            // Populate Year Filter
             const years = [...new Set(allStamps.map(s => s.visit_year))].sort().reverse();
             const yearSelect = document.getElementById('filter-year');
             years.forEach(y => {
@@ -611,7 +658,7 @@
             const locSelect = document.getElementById('filter-location');
             
             // US States
-            const usStamps = allStamps.filter(s => s.country_code === 'US' || !s.country_code); 
+            const usStamps = allStamps.filter(s => !s.isInternational); 
             const states = {};
             usStamps.forEach(s => {
                 const code = s.state_code || 'Other';
@@ -620,49 +667,63 @@
             });
 
             if (Object.keys(states).length > 0) {
-                // Add Generic "United States"
-                const usOpt = document.createElement('option');
-                usOpt.value = 'US_ALL';
-                usOpt.innerText = 'United States (All)';
-                locSelect.appendChild(usOpt);
-
                 const usGroup = document.createElement('optgroup');
-                usGroup.label = "States";
+                usGroup.label = "United States";
                 Object.keys(states).sort().forEach(code => {
                     const opt = document.createElement('option');
                     opt.value = code;
-                    opt.innerText = states[code]; // Removed count
+                    opt.innerText = states[code];
                     usGroup.appendChild(opt);
                 });
                 locSelect.appendChild(usGroup);
             }
 
-            // International
-            const intlStamps = allStamps.filter(s => s.country_code && s.country_code !== 'US');
+            // International (grouped by Country Name in state_code)
+            const intlStamps = allStamps.filter(s => s.isInternational);
             const countries = {};
             intlStamps.forEach(s => {
-                const code = s.country_code;
-                const name = code; // Ideally mapped to full name, using code for now
+                // For INTL stamps, we put the Country Name in locationLabel
+                const name = s.locationLabel; 
+                const code = name; // Use name as value for simplicity in filtering
                 if(!countries[code]) countries[code] = name;
             });
 
             if (Object.keys(countries).length > 0) {
-                // Add Generic "International"
-                const intOpt = document.createElement('option');
-                intOpt.value = 'INTL_ALL';
-                intOpt.innerText = 'International (All)';
-                locSelect.appendChild(intOpt);
-
                 const intGroup = document.createElement('optgroup');
-                intGroup.label = "Countries";
+                intGroup.label = "International";
                 Object.keys(countries).sort().forEach(code => {
                     const opt = document.createElement('option');
-                    opt.value = code;
-                    opt.innerText = countries[code]; // Removed count
+                    opt.value = code; // e.g. "Vatican City"
+                    opt.innerText = code;
                     intGroup.appendChild(opt);
                 });
                 locSelect.appendChild(intGroup);
             }
+        }
+
+        function handleFilterChange() {
+            // Scroll to top on re-filter
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Visual Update for Pills
+            ['filter-location', 'filter-year', 'sort-order'].forEach(id => {
+                const el = document.getElementById(id);
+                // logic: 'all' or 'location' (default sort key) are inactive states
+                const isDefault = el.value === 'all' || (id === 'sort-order' && el.value === 'location' && el.selectedIndex === 0);
+                
+                // For Sort Order, since 'location' is both value and default, check index or label logic
+                // If Sort is 'location', 'recent', 'az', 'date-added', mark active if not default interaction
+                if (id === 'sort-order') {
+                   // Always highlight if it's not the "Sort By:" label (first option)
+                   if (el.selectedIndex !== 0) el.classList.add('active-filter');
+                   else el.classList.remove('active-filter');
+                } else {
+                   if (el.value !== 'all') el.classList.add('active-filter');
+                   else el.classList.remove('active-filter');
+                }
+            });
+
+            applyFilters();
         }
 
         function applyFilters() {
@@ -674,18 +735,8 @@
             let filtered = allStamps.filter(item => {
                 let locMatch = true;
                 if (locFilter !== 'all') {
-                    if (locFilter === 'US_ALL') {
-                        locMatch = (item.country_code === 'US' || !item.country_code);
-                    } else if (locFilter === 'INTL_ALL') {
-                        locMatch = (item.country_code && item.country_code !== 'US');
-                    } else {
-                        // Specific State or Country Code
-                        if (item.country_code === 'US' || !item.country_code) {
-                            locMatch = item.state_code === locFilter;
-                        } else {
-                            locMatch = item.country_code === locFilter;
-                        }
-                    }
+                    // Match State Code (US) or Country Name (Intl)
+                    locMatch = item.locationLabel === locFilter;
                 }
 
                 let yearMatch = true;
@@ -699,9 +750,20 @@
             // 2. Sort
             filtered.sort((a, b) => {
                 if (sortOrder === 'date-added') return new Date(b.$createdAt) - new Date(a.$createdAt);
-                if (sortOrder === 'recent') return b.fullDate - a.fullDate; // Now "By Year" (uses date object)
+                
+                if (sortOrder === 'recent') {
+                    // Group by Year Descending
+                    const yearDiff = (b.visit_year || 0) - (a.visit_year || 0);
+                    if (yearDiff !== 0) return yearDiff;
+                    // Inside year, sort by date
+                    return b.fullDate - a.fullDate; 
+                }
+                
                 if (sortOrder === 'az') return a.name.localeCompare(b.name);
+                
                 if (sortOrder === 'location') {
+                    // International Last? Or Mix? Let's sort alphabetically by location label
+                    // But group US vs INTL if needed. For now, strict alpha on Key.
                     const locA = a.locationKey;
                     const locB = b.locationKey;
                     return locA.localeCompare(locB) || a.name.localeCompare(b.name);
@@ -722,70 +784,68 @@
                 return;
             }
 
-            // Group Logic to inject headers
             let renderList = [];
             let currentGroup = null;
 
             data.forEach((item) => {
                 let groupKey = '';
                 let groupLabel = '';
-                let isYear = false;
 
-                // Determine Grouping based on logic
+                // Determine Grouping
                 if (sortOrder === 'location') {
-                    groupKey = item.locationKey;
-                    groupLabel = item.country_code === 'US' ? item.state_code : item.country_code;
+                    // Group by State or Country Name
+                    groupKey = item.locationLabel;
+                    groupLabel = item.isInternational ? 'INTL' : item.locationLabel; 
+                    // Special case: If user wants specific country name in stamp, use that.
+                    // Request says: "group international stamps and should show INTL"
+                    if (item.isInternational) groupLabel = 'INTL';
                 } else if (sortOrder === 'recent') {
                     // Sort by Year -> Group by Year
-                    groupKey = item.visit_year || 'Unknown';
+                    groupKey = item.visit_year ? item.visit_year.toString() : 'Unknown';
                     groupLabel = groupKey;
-                    isYear = true;
                 } else {
-                    // If Date Added or AZ, we check Filters to see if we should show a header
+                    // Date Added or AZ: Check filters for forced grouping context
                     const yearFilter = document.getElementById('filter-year').value;
                     const locFilter = document.getElementById('filter-location').value;
 
                     if (yearFilter !== 'all' && locFilter === 'all') {
-                        // Filtered by year only -> Show Year
                         groupKey = item.visit_year;
                         groupLabel = groupKey;
-                        isYear = true;
                     } else if (locFilter !== 'all') {
-                         // Filtered by location -> Show Location Abbr
-                         groupKey = item.locationKey;
-                         groupLabel = item.country_code === 'US' ? item.state_code : item.country_code;
+                         groupKey = item.locationLabel;
+                         groupLabel = item.isInternational ? 'INTL' : item.locationLabel;
                     }
                 }
 
-                // If grouping changed, add a header object
+                // Add Header if group changes
                 if (groupKey && groupKey !== currentGroup) {
                     currentGroup = groupKey;
                     renderList.push({ type: 'header', label: groupLabel });
                 }
 
-                // Add item
                 renderList.push({ type: 'item', data: item });
             });
 
             // Render Flattened List
-            // We use a sequential index for coloring to ensure no touching colors
             let colorIndex = 0;
+            let itemIndex = 0; // For animation stagger
 
             renderList.forEach(obj => {
                 if (obj.type === 'header') {
                     container.innerHTML += createInkStamp(obj.label);
                 } else {
-                    // Assign Color sequentially
                     const color = THEMES[colorIndex % THEMES.length];
                     obj.data.theme_color = color; 
                     colorIndex++;
-                    container.appendChild(createStampCard(obj.data));
+                    
+                    const card = createStampCard(obj.data, itemIndex);
+                    container.appendChild(card);
+                    itemIndex++;
                 }
             });
         }
 
         function createInkStamp(text) {
-            // Dotted circle, abbreviated text in center
             return `
             <div class="ink-stamp-node">
                 <div class="ink-stamp-circle">
@@ -794,26 +854,37 @@
             </div>`;
         }
 
-        function createStampCard(item) {
+        function createStampCard(item, index) {
             const div = document.createElement('div');
             div.className = 'stamp-card';
             div.style.setProperty('--card-theme', item.theme_color);
-            div.onclick = () => openModal(item);
+            
+            // Waterfall animation: stagger based on index
+            div.style.animationDelay = `${index * 0.05}s`;
 
-            div.addEventListener('click', () => {
+            // Fix (1): Ensure click event works securely
+            div.addEventListener('click', function() {
                 openModal(item);
             });
 
-            const dateStr = formatDate(item);
+            // Show Year Only on Card (Request #7)
+            const yearStr = item.visit_year || '';
 
             if (item.img_url) {
                 // IMAGE STAMP
+                // Fix (2): Wait for load
+                const img = new Image();
+                img.src = item.img_url;
+                img.onload = () => {
+                    div.classList.add('is-loaded');
+                };
+
                 div.innerHTML = `
                     <div class="stamp">
                         <div class="stamp-content-wrapper">
                             <div class="stamp-image">
-                                <img src="${item.img_url}" loading="lazy" alt="${item.name}">
-                                ${dateStr ? `<div class="h-year">${dateStr}</div>` : ''}
+                                <img src="${item.img_url}" alt="${item.name}">
+                                ${yearStr ? `<div class="h-year">${yearStr}</div>` : ''}
                             </div>
                             <div class="stamp-overlay-text">
                                 <div class="h-city">${item.city || 'Unknown'}</div>
@@ -823,13 +894,15 @@
                     </div>
                 `;
             } else {
-                // JOURNAL STAMP
+                // JOURNAL STAMP (Text only, load immediately)
+                setTimeout(() => div.classList.add('is-loaded'), 10); // Slight tick to trigger anim
+                
                 div.innerHTML = `
                     <div class="stamp-journal">
                         <div class="h-city h-city-journal">${item.city || 'Unknown'}</div>
                         <div class="h-church">${item.name}</div>
                         ${item.notes ? `<div class="h-note">${item.notes}</div>` : ''}
-                        ${dateStr ? `<div class="h-year" style="position:relative; top:0; right:0; background:none; padding:0; margin-top:auto; text-align:right;">${dateStr}</div>` : ''}
+                        ${yearStr ? `<div class="h-year" style="position:relative; top:0; right:0; background:none; padding:0; margin-top:auto; text-align:right;">${yearStr}</div>` : ''}
                     </div>
                 `;
             }
@@ -852,24 +925,37 @@
             const left = document.getElementById('modal-image-container');
             const cityBtn = document.getElementById('modal-city-btn');
             
-            if (!modal || !cityBtn) return; // Safety check
+            if (!modal || !cityBtn) return; 
         
-            // Set Color Theme
             modal.style.setProperty('--modal-theme', item.theme_color);
+            modal.style.display = 'flex'; // Show it
             
-            // Updated Location Pill Styling
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+
+            // Google Maps Link Logic
+            // Create query string: "Place Name, City, State/Country"
+            let mapQuery = `${item.name}, ${item.city}`;
+            if (item.isInternational) {
+                mapQuery += `, ${item.locationLabel}`;
+            } else {
+                mapQuery += `, ${item.state_code}`;
+            }
+            cityBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+
+            // Location Pill Styling
             cityBtn.style.backgroundColor = `color-mix(in srgb, ${item.theme_color}, white 90%)`;
             cityBtn.style.color = item.theme_color;
             cityBtn.style.borderColor = item.theme_color;
         
-            // Left Content (Image or Ink Stamp)
+            // Left Content
             if (item.img_url) {
                 left.innerHTML = `<img src="${item.img_url}" alt="${item.name}">`;
             } else {
-                const locationLabel = item.country_code === 'US' ? item.state_code : item.country_code;
+                const locationLabel = item.isInternational ? 'INTL' : (item.state_code || 'LOG');
                 left.innerHTML = `
-                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color}; transform:scale(1.2); max-width: 150px;">
-                    ${locationLabel || 'LOG'}
+                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color};">
+                    ${locationLabel}
                 </div>`;
             }
         
@@ -877,7 +963,7 @@
             document.getElementById('modal-title').innerText = item.name;
             document.getElementById('modal-title').style.color = item.theme_color;
             
-            // Date Logic
+            // Full Date Logic for Modal
             const dateStr = formatDate(item);
             const dateElem = document.getElementById('modal-meta');
             if (dateStr && !dateStr.includes("Undefined")) {
@@ -896,27 +982,21 @@
                 noteElem.style.display = 'none';
             }
             
-            // Fix duplicate state text
+            // City Text
             let locString = item.city || '';
-            if (item.country_code === 'US') {
+            if (!item.isInternational) {
                 if (item.state_code && !locString.includes(item.state_code)) {
                     locString += `, ${item.state_code}`;
                 }
             } else {
-                if (item.country_code) locString += `, ${item.country_code}`;
+                if (item.locationLabel) locString += `, ${item.locationLabel}`;
             }
             cityBtn.innerText = locString;
-        
-            // Corrected Maps Link logic
-            const addressString = `${item.name}, ${item.city || ''} ${item.state_code || ''}`;
-            const mapQuery = encodeURIComponent(addressString);
-            cityBtn.href = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-        
-            modal.style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scroll
         }
 
         // Close on outside click
@@ -924,7 +1004,7 @@
             if (e.target === this) closeModal();
         });
 
-        // Run Init
+        // Init
         init();
 
     </script>
