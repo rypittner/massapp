@@ -23,7 +23,7 @@ async function handleSignup() {
         // Log in
         await account.createEmailSession(email, password);
         
-        window.location.href = 'dashboard.html';
+        window.location.href = 'database.html';
     } catch (error) {
         // This catches ANY error in step 2 (missing fields, weak password, etc.)
         alert("Signup failed: " + error.message);
@@ -43,8 +43,8 @@ async function handleLogin() {
         // Use createEmailPasswordSession if on Appwrite 14+ 
         await account.createEmailSession(email, password);
         
-        // 4. Redirect to dashboard
-        window.location.href = 'dashboard.html';
+        // 4. Redirect to database
+        window.location.href = 'database.html';
     } catch (error) {
         alert("Login failed: " + error.message);
     }
@@ -67,15 +67,15 @@ async function checkSession() {
         await account.get();
 
         // SUCCESS: The user is logged in.
-        // If they are NOT already on the dashboard, send them there.
-        if (!window.location.pathname.endsWith('dashboard.html')) {
-            window.location.href = 'dashboard.html';
+        // If they are NOT already on the database, send them there.
+        if (!window.location.pathname.endsWith('database.html')) {
+            window.location.href = 'database.html';
         }
 
     } catch (error) {
         // FAILURE: No active session.
-        // If they try to access the dashboard, kick them back to the start.
-        if (window.location.pathname.endsWith('dashboard.html')) {
+        // If they try to access the database, kick them back to the start.
+        if (window.location.pathname.endsWith('database.html')) {
             window.location.href = 'welcome.html'; // Or your main index page
         }
         console.log("Logged out: Access to public pages allowed.");
