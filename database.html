@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Passport</title>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Yrsa:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+    <style>
+        :root {
+            --primary-green: #064e3b;
+            --bg-color: #f2eeea;
+            --ink-gray: #555;
+            --ink-hover: #000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+        }
+
+        /* --- Header / User Profile Styles --- */
+        #main {
+            padding: 50px 50px 20px 50px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+
+        #avatar {
+            background: gray;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            border: 5px solid white;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        #user-details {
+            padding-left: 20px;
+        }
+
+        #fullname {
+            font-family: 'Yrsa', serif;
+            font-weight: 500;
+            margin: 0;
+            font-size: 36pt;
+            line-height: 1.1;
+        }
+
+        #user-info {
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .logout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 10pt;
+            font-family: 'Inter', sans-serif;
+            padding: 8px 16px;
+            font-weight: 600;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            color: black;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .logout:hover {
+            background: #f9f9f9;
+            transform: translateY(-1px);
+        }
+
+        hr {
+            border: none;
+            border-bottom: 1px solid #dcdcdc;
+            margin: 30px 0;
+        }
+
+        /* --- Controls / Filters --- */
+        #controls {
+            padding: 0 50px 30px 50px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            min-width: 150px;
+            cursor: pointer;
+        }
+
+        /* --- Grid & Stamp Styles --- */
+        #stamps-container {
+            padding: 0 50px 100px 50px;
+        }
+
+        .group-section {
+            margin-bottom: 60px;
+        }
+
+        /* Masonry Grid Layout within Groups */
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            align-items: start;
+            margin-top: 30px;
+        }
+
+        /* Ink Stamp (Header) Styles */
+        .state-ink-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .state-ink-wrapper:hover .ink-stamp-inner { 
+            border-color: var(--ink-hover) !important; 
+            color: var(--ink-hover) !important;
+        }
+
+        .ink-stamp { 
+            width: 180px;
+            aspect-ratio: 7/9; 
+            mix-blend-mode: multiply; 
+            opacity: 0.8;
+            font-family: 'Special Elite', cursive; 
+            color: var(--ink-gray); 
+            text-align: center;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transform: rotate(var(--ink-rot));
+            transition: color 0.3s ease;
+        }
+
+        .ink-stamp-inner { 
+            width: 85%; 
+            height: 85%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 10px;
+            border-width: 4px; 
+            border-color: var(--ink-gray);
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .ink-abbr { font-size: 32px; line-height: 1; margin-top: 5px; }
+        .ink-sep { font-size: 10px; margin: 5px 0; opacity: 0.6; letter-spacing: 2px;}
+        .ink-full { font-size: 14px; line-height: 1.1; text-transform: uppercase; max-width: 100%; word-wrap: break-word;}
+
+        /* Individual Stamp Card Styles */
+        .stamp-card {
+            transition: transform 0.2s ease;
+        }
+        .stamp-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Image Stamp Type */
+        .stamp {
+            width: 100%;
+            aspect-ratio: 39 / 50;
+            background-image: url('https://raw.githubusercontent.com/rypittner/massport-database/main/stamp_bg.svg');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
+            cursor: pointer;
+        }
+
+        .stamp-content-wrapper {
+            position: absolute;
+            inset: 6% 7.689%;
+            display: flex;
+            flex-direction: column;
+            z-index: 5;
+            border: 4px solid var(--card-theme);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .stamp-image {
+            flex-grow: 1;
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .stamp-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .h-year {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--card-theme);
+            background: rgba(255,255,255,0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .stamp-overlay-text {
+            background-color: var(--card-theme);
+            padding: 12px 10px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .h-city {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 100px;
+            padding: 2px 8px;
+            width: fit-content;
+            backdrop-filter: blur(8px);
+        }
+
+        .h-church {
+            font-family: 'Yrsa', serif;
+            font-size: 1.3rem;
+            line-height: 1.1;
+        }
+
+        /* Journal Stamp Type */
+        .stamp-journal {
+            background: white;
+            border: 1px solid #eaddd7;
+            border-top: 5px solid var(--card-theme);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .h-city-journal {
+            background: color-mix(in srgb, var(--card-theme), transparent 80%);
+            border: 1px solid var(--card-theme);
+            color: var(--card-theme);
+        }
+
+        .h-note {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #555;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        /* --- Modal Styles --- */
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #modal-content {
+            background: #f2eeea;
+            width: 900px;
+            max-width: 95vw;
+            height: 600px;
+            max-height: 90vh;
+            border-radius: 12px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        #modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        #modal-close:hover { background: white; }
+
+        .modal-left {
+            flex: 1.2;
+            background: #ddd;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-right {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-city {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            width: fit-content;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .modal-city:hover { opacity: 0.8; }
+
+        .modal-title {
+            font-family: 'Yrsa', serif;
+            font-size: 2.5rem;
+            line-height: 1.1;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .modal-meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .modal-note {
+            font-family: 'Yrsa', serif;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            #main, #controls, #stamps-container { padding-left: 20px; padding-right: 20px; }
+            #modal-content { flex-direction: column; height: auto; max-height: 90vh; overflow-y: auto;}
+            .modal-left { height: 250px; flex: none; }
+            .modal-right { padding: 25px; }
+            #fullname { font-size: 28pt; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="logout" onclick="handleLogout()">Log Out</button>
+
+    <div id="main">
+        <div class="header-content">
+            <div id="avatar">...</div>
+            <div id="user-details">
+                <h1 id="fullname">Loading...</h1>
+                <p id="user-info">@... • ... stamps</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+
+    <div id="controls">
+        <select id="filter-location" onchange="applyFilters()">
+            <option value="all">All Locations</option>
+            </select>
+
+        <select id="filter-year" onchange="applyFilters()">
+            <option value="all">All Years</option>
+            </select>
+
+        <select id="sort-order" onchange="applyFilters()">
+            <option value="date-added">Date Added</option>
+            <option value="az">Name (A-Z)</option>
+            <option value="recent">Visit Date (Recent)</option>
+            <option value="location" selected>Location</option>
+        </select>
+    </div>
+
+    <div id="stamps-container">
+        <div style="text-align:center; color:#888; padding:50px;">Loading Stamps...</div>
+    </div>
+
+    <div id="modal-overlay">
+        <div id="modal-content">
+            <button id="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-left" id="modal-image-container">
+                </div>
+            <div class="modal-right">
+                <a id="modal-city-btn" class="modal-city" target="_blank" href="#">City, State</a>
+                <h2 id="modal-title" class="modal-title">Name</h2>
+                <div id="modal-meta" class="modal-meta">Date</div>
+                <div id="modal-note" class="modal-note">Notes...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const CLIENT_CONFIG = {
+            ENDPOINT: 'https://sfo.cloud.appwrite.io/v1', // Replace with your endpoint
+            PROJECT_ID: '69567e050003ca751cbe',           // Replace
+            DATABASE_ID: '695680440027bfa5b520',         // Replace
+            COLLECTION_ID: 'stamps'      // Replace
+        };
+
+        const THEMES = ['#4478A2','#C65265','#D78143','#297381','#89974F','#DAAD60','#757498','#AA7876','#D7A995','#6E917A'];
+
+        // --- 2. INIT APPWRITE ---
+        const { Client, Account, Databases, Query } = Appwrite;
+        const client = new Client()
+            .setEndpoint(CLIENT_CONFIG.ENDPOINT)
+            .setProject(CLIENT_CONFIG.PROJECT_ID);
+
+        const account = new Account(client);
+        const databases = new Databases(client);
+
+        let currentUser = null;
+        let allStamps = [];
+        let viewUserId = null; // ID of the user whose stamps we are viewing
+
+        // --- 3. AUTH & USER LOGIC ---
+        async function init() {
+            try {
+                // Check if URL has hash for specific user
+                const hash = window.location.hash.substring(1); // Remove #
+                
+                // Get Logged In User
+                currentUser = await account.get();
+                
+                // Determine which data to show
+                viewUserId = hash ? hash : currentUser.$id;
+
+                // Update UI Header
+                if (!hash || hash === currentUser.$id) {
+                    updateHeader(currentUser);
+                } else {
+                    // We are viewing someone else. 
+                    // Ideally, we'd fetch their profile, but Appwrite Client SDK usually limits getting other user objects.
+                    // We will infer name from the stamps later or show generic text.
+                    updateHeader({ name: 'Guest View', email: 'User: ' + hash, $id: hash }, true);
+                }
+
+                // Fetch Stamps
+                await fetchStamps();
+
+            } catch (error) {
+                console.error("Auth Error:", error);
+                window.location.href = "index.html"; // Redirect to login if auth fails
+            }
+        }
+
+        function updateHeader(user, isGuest = false) {
+            document.getElementById('fullname').innerText = user.name || "Unknown User";
+            
+            // Avatar Initials
+            const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '??';
+            document.getElementById('avatar').innerText = initials;
+
+            // Info text (updated later with count)
+            const handle = user.email || user.$id;
+            document.getElementById('user-info').innerText = `${isGuest ? '' : '@'}${handle} • Loading stamps...`;
+        }
+
+        async function handleLogout() {
+            try {
+                await account.deleteSession('current');
+                window.location.href = "index.html"; 
+            } catch (e) {
+                alert('Error logging out');
+            }
+        }
+
+        // --- 4. DATA FETCHING ---
+        async function fetchStamps() {
+            try {
+                // Query database for stamps owned by viewUserId
+                const response = await databases.listDocuments(
+                    CLIENT_CONFIG.DATABASE_ID,
+                    CLIENT_CONFIG.COLLECTION_ID,
+                    [
+                        Query.equal('user_id', viewUserId),
+                        Query.limit(100) // Adjust limit or add pagination as needed
+                    ]
+                );
+
+                allStamps = response.documents.map(doc => {
+                    // Normalize data structure if needed
+                    return {
+                        ...doc,
+                        // Ensure theme exists
+                        theme_color: doc.theme_color || THEMES[Math.floor(Math.random() * THEMES.length)],
+                        // Helper for date
+                        fullDate: new Date(doc.visit_year, doc.visit_month ? doc.visit_month - 1 : 0, doc.visit_day || 1),
+                        locationKey: doc.country_code === 'US' ? (doc.state_code || 'US') : (doc.country_code || 'INTL')
+                    };
+                });
+
+                // Update Stamp Count in Header
+                const infoText = document.getElementById('user-info').innerText.split('•')[0];
+                document.getElementById('user-info').innerText = `${infoText} • ${allStamps.length} stamps`;
+
+                setupFilters();
+                applyFilters(); // Initial Render
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                document.getElementById('stamps-container').innerHTML = `<p style="text-align:center; color:red">Error loading stamps.</p>`;
+            }
+        }
+
+        // --- 5. FILTERS & SORTING ---
+        function setupFilters() {
+            // Populate Year Filter
+            const years = [...new Set(allStamps.map(s => s.visit_year))].sort().reverse();
+            const yearSelect = document.getElementById('filter-year');
+            years.forEach(y => {
+                if(y) {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.innerText = y;
+                    yearSelect.appendChild(opt);
+                }
+            });
+
+            // Populate Location Filter
+            const locSelect = document.getElementById('filter-location');
+            
+            // US States
+            const usStamps = allStamps.filter(s => s.country_code === 'US' || !s.country_code); // Default to US if missing
+            const states = {};
+            usStamps.forEach(s => {
+                const code = s.state_code || 'Other';
+                const name = s.full_state_name || code;
+                if(!states[code]) states[code] = { name: name, count: 0 };
+                states[code].count++;
+            });
+
+            if (Object.keys(states).length > 0) {
+                const usGroup = document.createElement('optgroup');
+                usGroup.label = "United States";
+                Object.keys(states).sort().forEach(code => {
+                    const opt = document.createElement('option');
+                    opt.value = code;
+                    opt.innerText = `${states[code].name} (${states[code].count})`;
+                    usGroup.appendChild(opt);
+                });
+                locSelect.appendChild(usGroup);
+            }
+
+            // International
+            const intlStamps = allStamps.filter(s => s.country_code && s.country_code !== 'US');
+            const countries = {};
+            intlStamps.forEach(s => {
+                const code = s.country_code;
+                const name = code; // Or map code to full name if available in DB
+                if(!countries[code]) countries[code] = { name: name, count: 0 };
+                countries[code].count++;
+            });
+
+            if (Object.keys(countries).length > 0) {
+                const intGroup = document.createElement('optgroup');
+                intGroup.label = "International";
+                Object.keys(countries).sort().forEach(code => {
+                    const opt = document.createElement('option');
+                    opt.value = code; // Use country code as value
+                    opt.innerText = `${countries[code].name} (${countries[code].count})`;
+                    intGroup.appendChild(opt);
+                });
+                locSelect.appendChild(intGroup);
+            }
+        }
+
+        function applyFilters() {
+            const locFilter = document.getElementById('filter-location').value;
+            const yearFilter = document.getElementById('filter-year').value;
+            const sortOrder = document.getElementById('sort-order').value;
+
+            // 1. Filter
+            let filtered = allStamps.filter(item => {
+                let locMatch = true;
+                if (locFilter !== 'all') {
+                    // If filter is a US state code (2 chars) or country code
+                    if (item.country_code === 'US' || !item.country_code) {
+                        locMatch = item.state_code === locFilter;
+                    } else {
+                        locMatch = item.country_code === locFilter;
+                    }
+                }
+
+                let yearMatch = true;
+                if (yearFilter !== 'all') {
+                    yearMatch = item.visit_year == yearFilter;
+                }
+
+                return locMatch && yearMatch;
+            });
+
+            // 2. Sort
+            filtered.sort((a, b) => {
+                if (sortOrder === 'date-added') return new Date(b.$createdAt) - new Date(a.$createdAt);
+                if (sortOrder === 'recent') return b.fullDate - a.fullDate;
+                if (sortOrder === 'az') return a.name.localeCompare(b.name);
+                if (sortOrder === 'location') {
+                    // Sort by State/Country Code then Name
+                    const locA = a.locationKey;
+                    const locB = b.locationKey;
+                    return locA.localeCompare(locB) || a.name.localeCompare(b.name);
+                }
+                return 0;
+            });
+
+            renderGrid(filtered, sortOrder);
+        }
+
+        // --- 6. RENDERING ---
+        function renderGrid(data, sortOrder) {
+            const container = document.getElementById('stamps-container');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">No stamps found.</div>';
+                return;
+            }
+
+            // Grouping Logic
+            let groups = {};
+            
+            if (sortOrder === 'location') {
+                // Group by State/Country
+                data.forEach(item => {
+                    const key = item.locationKey;
+                    if (!groups[key]) groups[key] = { 
+                        title: item.full_state_name || item.country_code || key, 
+                        code: key, 
+                        items: [] 
+                    };
+                    groups[key].items.push(item);
+                });
+            } else if (sortOrder === 'recent' || document.getElementById('filter-year').value !== 'all') {
+                // Group by Year
+                data.forEach(item => {
+                    const key = item.visit_year || 'Unknown';
+                    if (!groups[key]) groups[key] = { title: key, code: key, items: [] };
+                    groups[key].items.push(item);
+                });
+            } else {
+                // No grouping (just one big group)
+                groups['all'] = { title: 'All Stamps', code: 'ALL', items: data };
+            }
+
+            // Render Groups
+            Object.keys(groups).forEach(key => {
+                const group = groups[key];
+                const wrapper = document.createElement('div');
+                wrapper.className = 'group-section';
+
+                // Add Ink Stamp Header (Only if sorted by location or filtered/sorted by year)
+                // If "Date Added" or "A-Z", we usually skip headers unless user specifically filtered by something.
+                // Based on prompt, Ink Stamps appear before "each set".
+                
+                if (sortOrder === 'location' || sortOrder === 'recent') {
+                    const inkHtml = createInkStamp(group.title, group.code, sortOrder === 'location');
+                    wrapper.innerHTML += inkHtml;
+                }
+
+                // Grid Container
+                const grid = document.createElement('div');
+                grid.className = 'stamp-grid';
+
+                group.items.forEach(item => {
+                    grid.appendChild(createStampCard(item));
+                });
+
+                wrapper.appendChild(grid);
+                container.appendChild(wrapper);
+            });
+        }
+
+        function createInkStamp(title, code, isLocation) {
+            // Randomize slightly for organic look
+            const rot = Math.floor(Math.random() * 20) - 10; 
+            const bRadius = isLocation ? "50%" : "4px"; // Circle for states, Box for years
+            const iconName = isLocation ? "public" : "calendar_month";
+            
+            return `
+            <div class="state-ink-wrapper">
+                <div class="ink-stamp" style="--ink-rot: ${rot}deg">
+                    <div class="ink-stamp-inner" style="border-radius: ${bRadius};">
+                        <span class="material-symbols-rounded ink-icon" style="font-size:36px;">${iconName}</span>
+                        <div class="ink-abbr">${code.substring(0,4)}</div>
+                        <div class="ink-sep">- - - - - -</div>
+                        <div class="ink-full">${title}</div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function createStampCard(item) {
+            const div = document.createElement('div');
+            div.className = 'stamp-card';
+            div.style.setProperty('--card-theme', item.theme_color);
+            div.onclick = () => openModal(item);
+
+            const dateStr = formatDate(item);
+
+            if (item.img_url) {
+                // IMAGE STAMP
+                div.innerHTML = `
+                    <div class="stamp">
+                        <div class="stamp-content-wrapper">
+                            <div class="stamp-image">
+                                <img src="${item.img_url}" loading="lazy" alt="${item.name}">
+                                <div class="h-year">${dateStr}</div>
+                            </div>
+                            <div class="stamp-overlay-text">
+                                <div class="h-city">${item.city || 'Unknown'}</div>
+                                <div class="h-church">${item.name}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // JOURNAL STAMP
+                div.innerHTML = `
+                    <div class="stamp-journal">
+                        <div class="h-city h-city-journal">${item.city || 'Unknown'}</div>
+                        <div class="h-church">${item.name}</div>
+                        ${item.notes ? `<div class="h-note">${item.notes}</div>` : ''}
+                        <div class="h-year" style="position:relative; top:0; right:0; background:none; padding:0; margin-top:auto; text-align:right;">${dateStr}</div>
+                    </div>
+                `;
+            }
+            return div;
+        }
+
+        function formatDate(item) {
+            const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+            const m = item.visit_month ? months[item.visit_month - 1] : "";
+            const d = item.visit_day ? item.visit_day + "," : "";
+            return `${m} ${d} ${item.visit_year}`; 
+        }
+
+        // --- 7. MODAL LOGIC ---
+        function openModal(item) {
+            const modal = document.getElementById('modal-overlay');
+            const left = document.getElementById('modal-image-container');
+            const cityBtn = document.getElementById('modal-city-btn');
+            
+            // Set Color Theme
+            modal.style.setProperty('--modal-theme', item.theme_color);
+            cityBtn.style.backgroundColor = item.theme_color;
+            cityBtn.style.color = "white";
+
+            // Left Content (Image or Ink Stamp)
+            if (item.img_url) {
+                left.innerHTML = `<img src="${item.img_url}" alt="${item.name}">`;
+            } else {
+                // Render a large ink stamp if no image
+                const rot = -5;
+                const locationKey = item.country_code === 'US' ? item.state_code : item.country_code;
+                const locationName = item.full_state_name || item.country_code;
+                left.innerHTML = `
+                    <div class="ink-stamp" style="--ink-rot: ${rot}deg; transform: scale(1.5);">
+                        <div class="ink-stamp-inner" style="border-radius: 50%;">
+                            <span class="material-symbols-rounded ink-icon" style="font-size:36px;">location_on</span>
+                            <div class="ink-abbr">${locationKey || 'LOG'}</div>
+                            <div class="ink-sep">- - - - - -</div>
+                            <div class="ink-full">${locationName || 'Journal'}</div>
+                        </div>
+                    </div>`;
+            }
+
+            // Right Content
+            document.getElementById('modal-title').innerText = item.name;
+            document.getElementById('modal-title').style.color = item.theme_color;
+            document.getElementById('modal-meta').innerText = formatDate(item);
+            document.getElementById('modal-note').innerText = item.notes || "No notes added for this visit.";
+            
+            // Maps Link
+            cityBtn.innerText = `${item.city}, ${item.state_code || item.country_code}`;
+            const addressString = `${item.name}, ${item.address || ''} ${item.city || ''}`;
+            // Secure URL encoding
+            const mapQuery = encodeURIComponent(addressString);
+            cityBtn.href = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // Close on outside click
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Run Init
+        init();
+
+    </script>
+</body>
+</html>
