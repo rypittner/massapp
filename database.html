@@ -800,6 +800,10 @@
             div.style.setProperty('--card-theme', item.theme_color);
             div.onclick = () => openModal(item);
 
+            div.addEventListener('click', () => {
+                openModal(item);
+            });
+
             const dateStr = formatDate(item);
 
             if (item.img_url) {
