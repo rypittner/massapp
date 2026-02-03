@@ -810,13 +810,16 @@
                 renderList.push({ type: 'item', data: item });
             });
 
+            
             // Render Flattened List
             let colorIndex = 0;
-            let itemIndex = 0; // For animation stagger
-
+            let itemIndex = 0;
+            
             renderList.forEach(obj => {
                 if (obj.type === 'header') {
-                    container.innerHTML += createInkStamp(obj.label);
+                    // FIX: Use insertAdjacentHTML instead of innerHTML +=
+                    // This adds the header WITHOUT destroying existing event listeners
+                    container.insertAdjacentHTML('beforeend', createInkStamp(obj.label));
                 } else {
                     const color = THEMES[colorIndex % THEMES.length];
                     obj.data.theme_color = color; 
