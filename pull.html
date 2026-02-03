@@ -16,7 +16,7 @@
             --ink-gray: #555;
             --ink-hover: #000;
             /* Define the "Paper" background once */
-            --stamp-bg: url("data:image/svg+xml,%3Csvg id='Layer_2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19.43 24.88'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cg id='Layer_1-2'%3E%3Cpath class='cls-1' d='M18.71 22.88c0-.4.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.39 0-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69v-.65c-.4 0-.72-.32-.72-.72Z'/%3E%3C/g%3E%3C/svg%3E");
+            --stamp-bg: url("data:image/svg+xml,%3Csvg id='Layer_2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19.43 24.88'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cg id='Layer_1-2'%3E%3Cpath class='cls-1' d='M18.71 22.88c0-.4.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.39 0-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.04-.36.34-.64.71-.64v-.65c-.4 0-.72-.32-.72-.72Z'/%3E%3C/g%3E%3C/svg%3E");
         }
 
         body {
@@ -25,6 +25,7 @@
             padding: 0;
             font-family: 'Inter', sans-serif;
             color: #333;
+            overscroll-behavior-y: none;
             padding: 0px 50px;
         }
 
@@ -84,6 +85,7 @@
             margin: 0;
             font-size: 0.8rem;
             opacity: 0.8;
+            margin-top: 5px;
         }
 
         .logout {
@@ -109,7 +111,7 @@
             transform: translateY(-1px);
         }
 
-        /* --- Controls --- */
+        /* --- Controls (Moved to Header) --- */
         #controls {
             display: flex;
             gap: 10px;
@@ -118,7 +120,7 @@
 
         select {
             padding: 8px 16px;
-            border-radius: 50px;
+            border-radius: 50px; /* Pill Shape */
             border: 1px solid #ccc;
             background: #fcfcfc;
             font-family: 'Inter', sans-serif;
@@ -126,10 +128,11 @@
             min-width: 140px;
             cursor: pointer;
             outline: none;
-            color: #666;
+            color: #666; /* Default grayed out look */
             transition: all 0.2s;
         }
 
+        /* Active Filter State */
         select.active-filter {
             border: 1px solid var(--primary-green);
             color: #111;
@@ -138,17 +141,16 @@
             box-shadow: 0 2px 4px rgba(6, 78, 59, 0.1);
         }
 
-        /* --- New Masonry Grid Layout (Flex) --- */
-        /* Replaces CSS Columns to fix scrolling and animation order */
+        /* --- NEW MANUAL GRID LAYOUT (Replaces CSS Columns) --- */
         #stamps-container {
-            padding: 40px 50px 100px 50px;
             display: flex;
             gap: 30px;
-            align-items: flex-start; /* Important for unequal columns */
+            padding: 40px 50px 100px 50px;
             justify-content: center;
+            align-items: flex-start;
         }
-        
-        .masonry-col {
+
+        .masonry-column {
             display: flex;
             flex-direction: column;
             gap: 30px;
@@ -158,8 +160,9 @@
 
         @media (max-width: 900px) {
             #header-container { flex-direction: column; align-items: flex-start; gap: 20px; padding: 20px; }
-            #controls { width: 100%; overflow-x: auto; padding-bottom: 5px; }
-            #stamps-container { padding: 30px 20px; }
+            #controls { width: 100%; overflow-x: auto; padding-bottom: 5px; } 
+            #stamps-container { padding: 30px 20px; gap: 20px; }
+            .masonry-column { gap: 20px; }
             #avatar { width: 60px; height: 60px; font-size: 1.5rem; }
             #fullname { font-size: 24pt; }
             .logout { top: 10px; right: 10px; }
@@ -170,15 +173,15 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 20px; /* Spacing handled by gap, but good for safety */
-            min-height: 150px;
+            margin-bottom: 0px; /* Gap handled by column flex gap */
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         .ink-stamp-circle {
-            /* Desktop: Slightly larger than box, hanging off edges */
-            width: 110%; /* Makes it wider than container */
-            margin-left: -5%; /* Centers it relative to overflow */
+            /* Fix: Force circle and allow hang-over */
+            width: 110%; 
+            margin-left: -5%; /* Center it despite width increase */
             aspect-ratio: 1 / 1;
             border: 2px dashed var(--ink-gray);
             border-radius: 50%;
@@ -196,38 +199,23 @@
             transform: rotate(-5deg);
         }
 
-        @media (max-width: 600px) {
-            .ink-stamp-circle {
-                /* Mobile: Perfect circle, slightly larger than height of box context */
-                width: auto;
-                height: 180px; /* Fixed height larger than typical text box */
-                aspect-ratio: 1/1;
-                margin: 0;
-            }
-        }
-
-        /* --- Animation --- */
-        @keyframes stampFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* --- Individual Stamp Card Styles --- */
         .stamp-card {
             position: relative;
-            /* Animation setup */
-            opacity: 0;
-            animation: stampFadeIn 0.5s ease-out forwards;
+            /* Animation Setup */
+            opacity: 0; 
+            animation: fadeInUp 0.6s ease-out forwards;
         }
 
-        /* Hover fix: inner content moves with background */
-        .stamp-card:hover {
-            transform: translateY(-5px);
-            z-index: 2;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .stamp-card:hover .stamp {
-             /* Ensure no double transform here, the card handles it */
+
+        .stamp-card:hover {
+            transform: translateY(-5px) !important; /* Override animation transform for hover */
+            z-index: 2;
+            transition: transform 0.2s ease;
         }
 
         /* Image Stamp Type */
@@ -239,7 +227,7 @@
             background-repeat: no-repeat;
             background-position: center;
             position: relative;
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.05); 
             cursor: pointer;
         }
 
@@ -253,9 +241,8 @@
             border: 4px solid var(--card-theme);
             border-radius: 2px;
             overflow: hidden;
-            /* Fix for hover separation bug: Ensure this stays planted */
-            transform: translateZ(0); 
         }
+
 
         .stamp-image {
             flex-grow: 1;
@@ -273,6 +260,7 @@
             opacity: 0;
             filter: blur(10px);
             transition: opacity 0.3s ease-out, filter 0.3s ease-out;
+            will-change: opacity, filter; 
         }
 
         .stamp-image img.loaded {
@@ -403,7 +391,7 @@
         #modal-close:hover { background: white; }
 
         .modal-left {
-            flex: 1.5;
+            flex: 1.5; 
             background: #ddd;
             position: relative;
             overflow: hidden;
@@ -481,7 +469,7 @@
                 overflow-y: auto;
             }
             .modal-left { 
-                height: 300px;
+                height: 300px; 
                 flex: none; 
             }
             .modal-left img {
@@ -494,9 +482,12 @@
             #fullname { font-size: 24pt; }
             .ink-stamp-circle { font-size: 2rem; }
             
+            /* Enhanced Placeholder for Modal Mobile */
             #modal-image-container .ink-stamp-circle {
                 transform: scale(1.5) rotate(-10deg) !important;
                 max-height: 80% !important;
+                width: 80% !important; /* Reset specific width for modal placeholder */
+                margin: 0 !important;
                 aspect-ratio: 1 / 1 !important;
                 font-size: 4rem !important;
             }
@@ -512,7 +503,7 @@
             <div id="avatar">...</div>
             <div id="user-details">
                 <h1 id="fullname">Loading...</h1>
-                <p id="user-info">@... • ... stamps</p>
+                <p id="user-info">... stamps</p>
             </div>
         </div>
 
@@ -559,8 +550,7 @@
             ENDPOINT: 'https://sfo.cloud.appwrite.io/v1', 
             PROJECT_ID: '69567e050003ca751cbe',            
             DATABASE_ID: '695680440027bfa5b520',           
-            COLLECTION_ID: 'stamps',
-            PROFILES_ID: 'profiles' // NEW: You must create this collection in Appwrite
+            COLLECTION_ID: 'stamps'       
         };
 
         const THEMES = ['#4478A2','#C65265','#D78143','#297381','#89974F','#DAAD60','#757498','#AA7876','#D7A995','#6E917A'];
@@ -586,29 +576,22 @@
                 currentUser = await account.get();
                 viewUserId = hash ? hash : currentUser.$id;
 
-                let displayUsername = currentUser.name;
-
-                // Attempt to fetch custom Profile for username
-                try {
-                    const profileList = await databases.listDocuments(
-                        CLIENT_CONFIG.DATABASE_ID,
-                        CLIENT_CONFIG.PROFILES_ID,
-                        [Query.equal('user_id', viewUserId)]
-                    );
-                    if(profileList.documents.length > 0) {
-                        displayUsername = profileList.documents[0].username;
-                    }
-                } catch(e) {
-                    console.log("No custom profile found, using name.");
-                }
-
                 if (!hash || hash === currentUser.$id) {
-                    updateHeader({ ...currentUser, displayName: displayUsername });
+                    updateHeader(currentUser);
                 } else {
-                    updateHeader({ name: displayUsername, email: 'User: ' + hash, $id: hash, displayName: displayUsername }, true);
+                    updateHeader({ name: 'Guest View', email: 'User: ' + hash, $id: hash }, true);
                 }
 
                 await fetchStamps();
+
+                // Re-render on resize to adjust columns
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        applyFilters(); // Re-runs render with new column count
+                    }, 200);
+                });
 
             } catch (error) {
                 console.error("Auth Error:", error);
@@ -617,14 +600,13 @@
         }
 
         function updateHeader(user, isGuest = false) {
-            // Display registered username if available, else name
-            document.getElementById('fullname').innerText = user.displayName || user.name || "Unknown User";
+            document.getElementById('fullname').innerText = user.name || "Unknown User";
             
             const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '??';
             document.getElementById('avatar').innerText = initials;
 
-            const userInfoDisplay = user.displayName || "User";
-            document.getElementById('user-info').innerText = `@${userInfoDisplay} • Loading stamps...`;
+            // Updated Info Text (Removed Username/Email)
+            document.getElementById('user-info').innerText = `Loading stamps...`;
         }
 
         async function handleLogout() {
@@ -653,23 +635,27 @@
                     const m = doc.visit_month ? doc.visit_month - 1 : 0;
                     const d = doc.visit_day || 1;
                     
-                    // Logic fix: "Vatican under US" bug. 
-                    // Strictly check country_code for US vs Intl
+                    // Logic: International vs US
                     const isIntl = doc.country_code && doc.country_code !== 'US';
-                    const effectiveCountry = isIntl ? (doc.state_code || doc.country_code || 'International') : 'US';
                     
+                    // Effective Country Name:
+                    // If Intl: Use country name (stored in state_code based on previous logic, or country_code fallback)
+                    // If US: Use 'United States'
+                    const effectiveCountry = isIntl ? (doc.state_code || doc.country_code) : 'United States';
+                    
+                    // Specific location label (State for US, Country for Intl)
+                    const locationLabel = isIntl ? effectiveCountry : (doc.state_code || 'US');
+
                     return {
                         ...doc,
                         fullDate: new Date(y, m, d),
-                        // Helper for location sorting
-                        locationKey: isIntl ? effectiveCountry : (doc.state_code || 'US'),
-                        locationLabel: isIntl ? effectiveCountry : (doc.state_code || 'US'),
-                        isInternational: isIntl
+                        locationLabel: locationLabel,
+                        isInternational: isIntl,
+                        effectiveCountry: effectiveCountry
                     };
                 });
 
-                const infoText = document.getElementById('user-info').innerText.split('•')[0];
-                document.getElementById('user-info').innerText = `${infoText} • ${allStamps.length} stamps`;
+                document.getElementById('user-info').innerText = `${allStamps.length} stamps`;
 
                 setupFilters();
                 applyFilters(); 
@@ -694,59 +680,58 @@
                 }
             });
 
-            // Populate Location Filter
+            // Populate Location Filter (New Logic)
             const locSelect = document.getElementById('filter-location');
-            
-            // 1. United States Option (All)
-            const usStamps = allStamps.filter(s => !s.isInternational); 
-            if (usStamps.length > 0) {
-                const usAllOpt = document.createElement('option');
-                usAllOpt.value = "US_ALL";
-                usAllOpt.innerText = "United States (All)";
-                locSelect.appendChild(usAllOpt);
+            locSelect.innerHTML = '<option value="all">All Locations</option>';
 
+            // 1. UNITED STATES
+            const usStamps = allStamps.filter(s => !s.isInternational);
+            if (usStamps.length > 0) {
+                // Main Category
+                const usOpt = document.createElement('option');
+                usOpt.value = 'US_ALL';
+                usOpt.innerText = 'United States (All)';
+                locSelect.appendChild(usOpt);
+
+                // Sub-states
                 const states = {};
                 usStamps.forEach(s => {
                     const code = s.state_code || 'Other';
                     const name = s.full_state_name || code;
                     if(!states[code]) states[code] = name;
                 });
-
-                const usGroup = document.createElement('optgroup');
-                usGroup.label = "States";
+                
+                // Add separator or visual cue if needed, or just append
                 Object.keys(states).sort().forEach(code => {
                     const opt = document.createElement('option');
                     opt.value = code;
-                    opt.innerText = states[code];
-                    usGroup.appendChild(opt);
+                    opt.innerText = `— ${states[code]}`; // Indented
+                    locSelect.appendChild(opt);
                 });
-                locSelect.appendChild(usGroup);
             }
 
-            // 2. International Option (All)
+            // 2. INTERNATIONAL
             const intlStamps = allStamps.filter(s => s.isInternational);
             if (intlStamps.length > 0) {
-                const intlAllOpt = document.createElement('option');
-                intlAllOpt.value = "INTL_ALL";
-                intlAllOpt.innerText = "International (All)";
-                locSelect.appendChild(intlAllOpt);
+                // Main Category
+                const intlOpt = document.createElement('option');
+                intlOpt.value = 'INTL_ALL';
+                intlOpt.innerText = 'International (All)';
+                locSelect.appendChild(intlOpt);
 
+                // Sub-countries
                 const countries = {};
                 intlStamps.forEach(s => {
                     const name = s.locationLabel; 
-                    const code = name; 
-                    if(!countries[code]) countries[code] = name;
+                    if(!countries[name]) countries[name] = name;
                 });
 
-                const intGroup = document.createElement('optgroup');
-                intGroup.label = "International Countries";
-                Object.keys(countries).sort().forEach(code => {
+                Object.keys(countries).sort().forEach(name => {
                     const opt = document.createElement('option');
-                    opt.value = code; 
-                    opt.innerText = code;
-                    intGroup.appendChild(opt);
+                    opt.value = name;
+                    opt.innerText = `— ${name}`; // Indented
+                    locSelect.appendChild(opt);
                 });
-                locSelect.appendChild(intGroup);
             }
         }
 
@@ -783,7 +768,7 @@
                     } else if (locFilter === 'INTL_ALL') {
                         locMatch = item.isInternational;
                     } else {
-                        // Match State Code or Country Name
+                        // Match State Code (US) or Country Name (Intl)
                         locMatch = item.locationLabel === locFilter;
                     }
                 }
@@ -809,13 +794,10 @@
                 if (sortOrder === 'az') return a.name.localeCompare(b.name);
                 
                 if (sortOrder === 'location') {
-                    // Separate US and Intl for clean sorting
-                    const aInt = a.isInternational ? 1 : 0;
-                    const bInt = b.isInternational ? 1 : 0;
-                    if (aInt !== bInt) return aInt - bInt; // US First
-
-                    const locA = a.locationKey;
-                    const locB = b.locationKey;
+                    // Logic: US first, then Intl? Or purely alpha?
+                    // Let's do purely alpha on locationKey, then Name
+                    const locA = a.locationLabel;
+                    const locB = b.locationLabel;
                     return locA.localeCompare(locB) || a.name.localeCompare(b.name);
                 }
                 return 0;
@@ -824,7 +806,17 @@
             renderMasonryGrid(filtered, sortOrder);
         }
 
-        // --- 6. RENDERING (JS CALCULATED MASONRY) ---
+        // --- 6. RENDERING (MANUAL GRID) ---
+        
+        function getColumnCount() {
+            const width = window.innerWidth;
+            if (width > 1200) return 5;
+            if (width > 1000) return 4; // Added 4 column breakdown
+            if (width > 768) return 3;
+            if (width > 480) return 2;
+            return 1;
+        }
+
         function renderMasonryGrid(data, sortOrder) {
             const container = document.getElementById('stamps-container');
             container.innerHTML = '';
@@ -834,114 +826,105 @@
                 return;
             }
 
-            // A. Calculate Columns based on width
-            const width = window.innerWidth;
-            let numCols = 1;
-            if (width > 1400) numCols = 5;
-            else if (width > 1100) numCols = 4;
-            else if (width > 800) numCols = 3;
-            else if (width > 600) numCols = 2;
-            else numCols = 1;
-
-            // B. Create Flattened List with Headers
-            let flatList = [];
+            // 1. Create Layout List (Headers + Items)
+            let layoutList = [];
             let currentGroup = null;
 
             data.forEach((item) => {
                 let groupKey = '';
                 let groupLabel = '';
 
-                // Determine Grouping
                 if (sortOrder === 'location') {
                     groupKey = item.locationLabel;
-                    groupLabel = item.isInternational ? item.locationLabel : item.locationLabel; 
+                    groupLabel = item.isInternational ? 'INTL' : item.locationLabel; 
+                    if (item.isInternational) groupLabel = 'INTL'; // As per initial logic
                 } else if (sortOrder === 'recent') {
                     groupKey = item.visit_year ? item.visit_year.toString() : 'Unknown';
                     groupLabel = groupKey;
                 } else {
                     const yearFilter = document.getElementById('filter-year').value;
                     const locFilter = document.getElementById('filter-location').value;
+
                     if (yearFilter !== 'all' && locFilter === 'all') {
                         groupKey = item.visit_year;
                         groupLabel = groupKey;
                     } else if (locFilter !== 'all') {
                          groupKey = item.locationLabel;
-                         groupLabel = item.locationLabel;
+                         groupLabel = item.isInternational ? 'INTL' : item.locationLabel;
                     }
                 }
 
                 if (groupKey && groupKey !== currentGroup) {
                     currentGroup = groupKey;
-                    flatList.push({ type: 'header', label: groupLabel });
+                    layoutList.push({ type: 'header', label: groupLabel });
                 }
 
-                flatList.push({ type: 'item', data: item });
+                layoutList.push({ type: 'item', data: item });
             });
 
-            // C. Create Column Arrays
-            const columns = Array.from({ length: numCols }, () => []);
-
-            // D. Distribute Items Left-to-Right (Col 1, Col 2, Col 3...)
-            flatList.forEach((obj, index) => {
-                const colIndex = index % numCols;
-                columns[colIndex].push(obj);
-            });
-
-            // E. Render Columns
-            let totalItemIndex = 0; // For staggered animation across all columns
-            
-            // We need to sync animation delay across columns to look like left-to-right filling
-            // The item at flatList[i] is at columns[i % numCols][Math.floor(i / numCols)]
-            
-            // Actually, simpler approach for styling:
-            // Just iterate the columns and append divs. 
-            // BUT we want animation order to be 1st item -> 2nd item -> 3rd item visually.
-            // Since we filled them in that order, we can just assign animation-delay based on flat index.
-
-            columns.forEach((colItems, colIdx) => {
+            // 2. Prepare Columns
+            const colCount = getColumnCount();
+            const cols = [];
+            for(let i=0; i<colCount; i++) {
                 const colDiv = document.createElement('div');
-                colDiv.className = 'masonry-col';
-                
-                colItems.forEach((obj) => {
-                    let element;
-                    // Calculate original index to sync animation timing
-                    // We know flatList structure, but finding exact index is O(N).
-                    // Optimization: We can store index in obj.
-                    
-                    if (obj.type === 'header') {
-                        element = createInkStampElement(obj.label);
-                    } else {
-                        const color = THEMES[totalItemIndex % THEMES.length];
-                        obj.data.theme_color = color;
-                        element = createStampCard(obj.data, totalItemIndex);
-                        totalItemIndex++; // Only increment color for actual stamps
-                    }
-
-                    // Calculate global delay based on order in flatList
-                    // Let's find this object in flatList to get its index
-                    const globalIndex = flatList.indexOf(obj);
-                    element.style.animationDelay = `${globalIndex * 0.05}s`; // Fast stagger
-
-                    colDiv.appendChild(element);
-                });
-
+                colDiv.className = 'masonry-column';
+                cols.push(colDiv);
                 container.appendChild(colDiv);
+            }
+
+            // 3. Distribute Items (Round Robin)
+            let colorIndex = 0;
+            let itemIndex = 0; // For unique IDs if needed
+            let globalAnimationIndex = 0; // For sequential animation delay
+
+            layoutList.forEach((obj, i) => {
+                // Determine which column to place this in
+                // We just cycle 0, 1, 2, ... colCount-1
+                const targetColIndex = i % colCount;
+                const targetCol = cols[targetColIndex];
+
+                if (obj.type === 'header') {
+                    // Inject Header as a node
+                    const headerHTML = createInkStamp(obj.label);
+                    // We need to create a wrapper element to append to the column
+                    const wrapper = document.createElement('div');
+                    wrapper.innerHTML = headerHTML;
+                    // Animation delay for header too
+                    wrapper.style.opacity = '0';
+                    wrapper.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    wrapper.style.animationDelay = `${globalAnimationIndex * 0.05}s`;
+                    
+                    targetCol.appendChild(wrapper.firstElementChild);
+                    globalAnimationIndex++;
+
+                } else {
+                    const color = THEMES[colorIndex % THEMES.length];
+                    obj.data.theme_color = color; 
+                    colorIndex++;
+                    
+                    const card = createStampCard(obj.data);
+                    
+                    // APPLY SEQUENTIAL DELAY
+                    // This makes it animate Col1->Col2->Col3... row by row
+                    card.style.animationDelay = `${globalAnimationIndex * 0.05}s`;
+                    
+                    targetCol.appendChild(card);
+                    itemIndex++;
+                    globalAnimationIndex++;
+                }
             });
         }
-        
-        // Helper to return DOM element for Ink Stamp (vs string)
-        function createInkStampElement(text) {
-             const wrapper = document.createElement('div');
-             wrapper.innerHTML = `
+
+        function createInkStamp(text) {
+            return `
             <div class="ink-stamp-node">
                 <div class="ink-stamp-circle">
                     ${text}
                 </div>
             </div>`;
-            return wrapper.firstElementChild;
         }
 
-        function createStampCard(item, index) {
+        function createStampCard(item) {
             const div = document.createElement('div');
             div.className = 'stamp-card';
             div.style.setProperty('--card-theme', item.theme_color);
@@ -1003,35 +986,38 @@
             
             document.body.style.overflow = 'hidden';
 
+            // Google Maps Link Logic
             let mapQuery = `${item.name}, ${item.city}`;
             if (item.isInternational) {
                 mapQuery += `, ${item.locationLabel}`;
             } else {
                 mapQuery += `, ${item.state_code}`;
             }
-            // Fix: Syntax for template literal
-            cityBtn.href = `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(mapQuery)}`;
+            // FIX: Template literal syntax
+            cityBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
 
             cityBtn.style.backgroundColor = `color-mix(in srgb, ${item.theme_color}, white 90%)`;
             cityBtn.style.color = item.theme_color;
             cityBtn.style.borderColor = item.theme_color;
         
+            // Left Content
             if (item.img_url) {
                 left.innerHTML = `<img src="${item.img_url}" alt="${item.name}">`;
             } else {
                 const locationLabel = item.isInternational ? 'INTL' : (item.state_code || 'LOG');
                 left.innerHTML = `
-                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color}; transform:rotate(-10deg); width:80%; margin:0;">
+                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color};">
                     ${locationLabel}
                 </div>`;
             }
         
+            // Right Content
             document.getElementById('modal-title').innerText = item.name;
             document.getElementById('modal-title').style.color = item.theme_color;
             
             const dateStr = formatDate(item);
             const dateElem = document.getElementById('modal-meta');
-            if (dateStr && !dateStr.includes("Undefined")) {
+            if (dateStr) {
                 dateElem.innerText = dateStr;
                 dateElem.style.display = 'block';
             } else {
@@ -1064,12 +1050,6 @@
 
         document.getElementById('modal-overlay').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
-        });
-
-        // Resize Listener for Masonry
-        window.addEventListener('resize', () => {
-             // Debounce slightly or just rerun
-             if(allStamps.length > 0) applyFilters();
         });
 
         init();
