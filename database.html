@@ -233,6 +233,7 @@
             overflow: hidden;
         }
 
+
         .stamp-image {
             flex-grow: 1;
             position: relative;
@@ -246,6 +247,16 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            opacity: 0;
+            filter: blur(10px);
+            transition: opacity 0.6s ease-out, filter 0.8s ease-out;
+            will-change: opacity, filter; /* Hardware acceleration hint */
+        }
+
+                /* Loaded State: Clear and Visible */
+        .stamp-image img.loaded {
+            opacity: 1;
+            filter: blur(0);
         }
 
         .h-year {
