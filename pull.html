@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My MassPort</title>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.1"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Yrsa:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
+
+    <style>
+        :root {
+            --primary-green: #064e3b;
+            --bg-color: #f2eeea;
+            --ink-gray: #555;
+            --ink-hover: #000;
+            /* Define the "Paper" background once */
+            --stamp-bg: url("data:image/svg+xml,%3Csvg id='Layer_2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19.43 24.88'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cg id='Layer_1-2'%3E%3Cpath class='cls-1' d='M18.71 22.88c0-.4.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.4 0-.72-.32-.72-.72s.32-.72.72-.72v-.65c-.39 0-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69s-.7-.31-.72-.69h-.73c-.02.38-.33.69-.72.69v-.65c-.4 0-.72-.32-.72-.72Z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            padding: 0px 50px;
+        }
+
+        /* --- Sticky Header --- */
+        #header-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--bg-color);
+            padding: 20px 50px;
+            border-bottom: 1px solid #dcdcdc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- Avatar & User --- */
+        #avatar {
+            background: gray;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            border: 4px solid white;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        #user-details {
+            padding-left: 20px;
+        }
+
+        #fullname {
+            font-family: 'Yrsa', serif;
+            font-weight: 500;
+            margin: 0;
+            font-size: 28pt;
+            line-height: 1.1;
+        }
+
+        #user-info {
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin: 0;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .logout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 9pt;
+            font-family: 'Inter', sans-serif;
+            padding: 6px 12px;
+            font-weight: 600;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            color: black;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            z-index: 2000;
+        }
+
+        .logout:hover {
+            background: #f9f9f9;
+            transform: translateY(-1px);
+        }
+
+        /* --- Controls --- */
+        #controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select {
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid #ccc;
+            background: #fcfcfc;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            min-width: 140px;
+            cursor: pointer;
+            outline: none;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        select.active-filter {
+            border: 1px solid var(--primary-green);
+            color: #111;
+            background: white;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(6, 78, 59, 0.1);
+        }
+
+        /* --- New Masonry Grid Layout (Flex) --- */
+        /* Replaces CSS Columns to fix scrolling and animation order */
+        #stamps-container {
+            padding: 40px 50px 100px 50px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start; /* Important for unequal columns */
+            justify-content: center;
+        }
+        
+        .masonry-col {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            flex: 1;
+            min-width: 0; /* Prevents flex items from overflowing */
+        }
+
+        @media (max-width: 900px) {
+            #header-container { flex-direction: column; align-items: flex-start; gap: 20px; padding: 20px; }
+            #controls { width: 100%; overflow-x: auto; padding-bottom: 5px; }
+            #stamps-container { padding: 30px 20px; }
+            #avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+            #fullname { font-size: 24pt; }
+            .logout { top: 10px; right: 10px; }
+        }
+
+        /* --- Ink Stamp (Dashed Circle) --- */
+        .ink-stamp-node {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px; /* Spacing handled by gap, but good for safety */
+            min-height: 150px;
+        }
+
+        .ink-stamp-circle {
+            /* Desktop: Slightly larger than box, hanging off edges */
+            width: 110%; /* Makes it wider than container */
+            margin-left: -5%; /* Centers it relative to overflow */
+            aspect-ratio: 1 / 1;
+            border: 2px dashed var(--ink-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-gray);
+            font-family: 'Yrsa', serif;
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            text-align: center;
+            opacity: 0.5;
+            padding: 10px;
+            box-sizing: border-box;
+            transform: rotate(-5deg);
+        }
+
+        @media (max-width: 600px) {
+            .ink-stamp-circle {
+                /* Mobile: Perfect circle, slightly larger than height of box context */
+                width: auto;
+                height: 180px; /* Fixed height larger than typical text box */
+                aspect-ratio: 1/1;
+                margin: 0;
+            }
+        }
+
+        /* --- Animation --- */
+        @keyframes stampFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Individual Stamp Card Styles --- */
+        .stamp-card {
+            position: relative;
+            /* Animation setup */
+            opacity: 0;
+            animation: stampFadeIn 0.5s ease-out forwards;
+        }
+
+        /* Hover fix: inner content moves with background */
+        .stamp-card:hover {
+            transform: translateY(-5px);
+            z-index: 2;
+        }
+        
+        .stamp-card:hover .stamp {
+             /* Ensure no double transform here, the card handles it */
+        }
+
+        /* Image Stamp Type */
+        .stamp {
+            width: 100%;
+            aspect-ratio: 39 / 50;
+            background-image: var(--stamp-bg);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .stamp-content-wrapper {
+            background: var(--card-theme);
+            position: absolute;
+            inset: 6% 7.689%;
+            display: flex;
+            flex-direction: column;
+            z-index: 5;
+            border: 4px solid var(--card-theme);
+            border-radius: 2px;
+            overflow: hidden;
+            /* Fix for hover separation bug: Ensure this stays planted */
+            transform: translateZ(0); 
+        }
+
+        .stamp-image {
+            flex-grow: 1;
+            position: relative;
+            background: rgba(0,0,0,0.5);
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        .stamp-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            filter: blur(10px);
+            transition: opacity 0.3s ease-out, filter 0.3s ease-out;
+        }
+
+        .stamp-image img.loaded {
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        .h-year {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--card-theme);
+            background: rgb(255,255,255);
+            padding: 2px 6px;
+            border-radius: 50px;
+            text-transform:uppercase;
+            letter-spacing:0.3;
+        }
+
+        .stamp-overlay-text {
+            background-color: var(--card-theme);
+            padding: 12px 10px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .h-city {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 100px;
+            padding: 2px 8px;
+            width: fit-content;
+            backdrop-filter: blur(8px);
+        }
+
+        .h-church {
+            font-family: 'Yrsa', serif;
+            font-size: 1.3rem;
+            line-height: 1.1;
+        }
+
+        /* Journal Stamp Type */
+        .stamp-journal {
+            background: white;
+            border: 1px solid #eaddd7;
+            border-top: 5px solid var(--card-theme);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            min-height: 100px;
+        }
+
+        .h-city-journal {
+            background: color-mix(in srgb, var(--card-theme), transparent 80%);
+            border: 1px solid var(--card-theme);
+            color: var(--card-theme);
+        }
+
+        .h-note {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #555;
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        /* --- Modal Styles --- */
+        #modal-overlay { 
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 9999999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #modal-content {
+            box-sizing: border-box;
+            background: #ffffff;
+            width: 900px;
+            max-width: 95vw;
+            height: auto;
+            max-height: 90vh;
+            border-radius: 12px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        #modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        #modal-close:hover { background: white; }
+
+        .modal-left {
+            flex: 1.5;
+            background: #ddd;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px; 
+        }
+
+        .modal-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .modal-right {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .modal-city {
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            width: fit-content;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            background: rgba(0,0,0,0.1); 
+            border: 1px solid currentColor;
+        }
+        .modal-city:hover { opacity: 0.8; }
+
+        .modal-title {
+            font-family: 'Yrsa', serif;
+            font-size: 2.5rem;
+            line-height: 1.1;
+            margin: 0;
+            font-weight: 600;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .modal-meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .modal-note {
+            font-family: 'Yrsa', serif;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            #modal-content { 
+                flex-direction: column; 
+                max-height: 85vh; 
+                margin: 0 auto;
+                overflow-y: auto;
+            }
+            .modal-left { 
+                height: 300px;
+                flex: none; 
+            }
+            .modal-left img {
+                object-fit: cover; 
+                object-position: top;
+            }
+            .modal-right { 
+                justify-content: flex-start;
+            }
+            #fullname { font-size: 24pt; }
+            .ink-stamp-circle { font-size: 2rem; }
+            
+            #modal-image-container .ink-stamp-circle {
+                transform: scale(1.5) rotate(-10deg) !important;
+                max-height: 80% !important;
+                aspect-ratio: 1 / 1 !important;
+                font-size: 4rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="logout" onclick="handleLogout()">Log Out</button>
+
+    <div id="header-container">
+        <div class="header-left">
+            <div id="avatar">...</div>
+            <div id="user-details">
+                <h1 id="fullname">Loading...</h1>
+                <p id="user-info">@... • ... stamps</p>
+            </div>
+        </div>
+
+        <div id="controls">
+            <select id="sort-order" onchange="handleFilterChange()">
+                <option value="location" selected>Sort By:</option>
+                <option value="location">Location</option>
+                <option value="recent">Year</option>
+                <option value="az">Name (A-Z)</option>
+                <option value="date-added">Date Added</option>
+            </select>
+
+            <select id="filter-location" onchange="handleFilterChange()">
+                <option value="all">All Locations</option>
+            </select>
+
+            <select id="filter-year" onchange="handleFilterChange()">
+                <option value="all">All Years</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="stamps-container">
+        <div style="text-align:center; color:#888; padding:50px;">Loading Stamps...</div>
+    </div>
+
+    <div id="modal-overlay">
+        <div id="modal-content">
+            <button id="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-left" id="modal-image-container">
+            </div>
+            <div class="modal-right">
+                <a id="modal-city-btn" class="modal-city" target="_blank" href="#">City, State</a>
+                <h2 id="modal-title" class="modal-title">Name</h2>
+                <div id="modal-meta" class="modal-meta">Date</div>
+                <div id="modal-note" class="modal-note">Notes...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const CLIENT_CONFIG = {
+            ENDPOINT: 'https://sfo.cloud.appwrite.io/v1', 
+            PROJECT_ID: '69567e050003ca751cbe',            
+            DATABASE_ID: '695680440027bfa5b520',           
+            COLLECTION_ID: 'stamps',
+            PROFILES_ID: 'profiles' // NEW: You must create this collection in Appwrite
+        };
+
+        const THEMES = ['#4478A2','#C65265','#D78143','#297381','#89974F','#DAAD60','#757498','#AA7876','#D7A995','#6E917A'];
+
+        // --- 2. INIT APPWRITE ---
+        const { Client, Account, Databases, Query } = Appwrite;
+        const client = new Client()
+            .setEndpoint(CLIENT_CONFIG.ENDPOINT)
+            .setProject(CLIENT_CONFIG.PROJECT_ID);
+
+        const account = new Account(client);
+        const databases = new Databases(client);
+
+        let currentUser = null;
+        let allStamps = [];
+        let viewUserId = null; 
+
+        // --- 3. AUTH & USER LOGIC ---
+        async function init() {
+            try {
+                const hash = window.location.hash.substring(1); 
+                
+                currentUser = await account.get();
+                viewUserId = hash ? hash : currentUser.$id;
+
+                let displayUsername = currentUser.name;
+
+                // Attempt to fetch custom Profile for username
+                try {
+                    const profileList = await databases.listDocuments(
+                        CLIENT_CONFIG.DATABASE_ID,
+                        CLIENT_CONFIG.PROFILES_ID,
+                        [Query.equal('user_id', viewUserId)]
+                    );
+                    if(profileList.documents.length > 0) {
+                        displayUsername = profileList.documents[0].username;
+                    }
+                } catch(e) {
+                    console.log("No custom profile found, using name.");
+                }
+
+                if (!hash || hash === currentUser.$id) {
+                    updateHeader({ ...currentUser, displayName: displayUsername });
+                } else {
+                    updateHeader({ name: displayUsername, email: 'User: ' + hash, $id: hash, displayName: displayUsername }, true);
+                }
+
+                await fetchStamps();
+
+            } catch (error) {
+                console.error("Auth Error:", error);
+                window.location.href = "index.html"; 
+            }
+        }
+
+        function updateHeader(user, isGuest = false) {
+            // Display registered username if available, else name
+            document.getElementById('fullname').innerText = user.displayName || user.name || "Unknown User";
+            
+            const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() : '??';
+            document.getElementById('avatar').innerText = initials;
+
+            const userInfoDisplay = user.displayName || "User";
+            document.getElementById('user-info').innerText = `@${userInfoDisplay} • Loading stamps...`;
+        }
+
+        async function handleLogout() {
+            try {
+                await account.deleteSession('current');
+                window.location.href = "index.html"; 
+            } catch (e) {
+                alert('Error logging out');
+            }
+        }
+
+        // --- 4. DATA FETCHING ---
+        async function fetchStamps() {
+            try {
+                const response = await databases.listDocuments(
+                    CLIENT_CONFIG.DATABASE_ID,
+                    CLIENT_CONFIG.COLLECTION_ID,
+                    [
+                        Query.equal('user_id', viewUserId),
+                        Query.limit(5000) 
+                    ]
+                );
+
+                allStamps = response.documents.map(doc => {
+                    const y = doc.visit_year || 0;
+                    const m = doc.visit_month ? doc.visit_month - 1 : 0;
+                    const d = doc.visit_day || 1;
+                    
+                    // Logic fix: "Vatican under US" bug. 
+                    // Strictly check country_code for US vs Intl
+                    const isIntl = doc.country_code && doc.country_code !== 'US';
+                    const effectiveCountry = isIntl ? (doc.state_code || doc.country_code || 'International') : 'US';
+                    
+                    return {
+                        ...doc,
+                        fullDate: new Date(y, m, d),
+                        // Helper for location sorting
+                        locationKey: isIntl ? effectiveCountry : (doc.state_code || 'US'),
+                        locationLabel: isIntl ? effectiveCountry : (doc.state_code || 'US'),
+                        isInternational: isIntl
+                    };
+                });
+
+                const infoText = document.getElementById('user-info').innerText.split('•')[0];
+                document.getElementById('user-info').innerText = `${infoText} • ${allStamps.length} stamps`;
+
+                setupFilters();
+                applyFilters(); 
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                document.getElementById('stamps-container').innerHTML = `<p style="text-align:center; color:red">Error loading stamps.</p>`;
+            }
+        }
+
+        // --- 5. FILTERS & SORTING ---
+        function setupFilters() {
+            // Populate Year Filter
+            const years = [...new Set(allStamps.map(s => s.visit_year))].sort().reverse();
+            const yearSelect = document.getElementById('filter-year');
+            years.forEach(y => {
+                if(y) {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.innerText = y;
+                    yearSelect.appendChild(opt);
+                }
+            });
+
+            // Populate Location Filter
+            const locSelect = document.getElementById('filter-location');
+            
+            // 1. United States Option (All)
+            const usStamps = allStamps.filter(s => !s.isInternational); 
+            if (usStamps.length > 0) {
+                const usAllOpt = document.createElement('option');
+                usAllOpt.value = "US_ALL";
+                usAllOpt.innerText = "United States (All)";
+                locSelect.appendChild(usAllOpt);
+
+                const states = {};
+                usStamps.forEach(s => {
+                    const code = s.state_code || 'Other';
+                    const name = s.full_state_name || code;
+                    if(!states[code]) states[code] = name;
+                });
+
+                const usGroup = document.createElement('optgroup');
+                usGroup.label = "States";
+                Object.keys(states).sort().forEach(code => {
+                    const opt = document.createElement('option');
+                    opt.value = code;
+                    opt.innerText = states[code];
+                    usGroup.appendChild(opt);
+                });
+                locSelect.appendChild(usGroup);
+            }
+
+            // 2. International Option (All)
+            const intlStamps = allStamps.filter(s => s.isInternational);
+            if (intlStamps.length > 0) {
+                const intlAllOpt = document.createElement('option');
+                intlAllOpt.value = "INTL_ALL";
+                intlAllOpt.innerText = "International (All)";
+                locSelect.appendChild(intlAllOpt);
+
+                const countries = {};
+                intlStamps.forEach(s => {
+                    const name = s.locationLabel; 
+                    const code = name; 
+                    if(!countries[code]) countries[code] = name;
+                });
+
+                const intGroup = document.createElement('optgroup');
+                intGroup.label = "International Countries";
+                Object.keys(countries).sort().forEach(code => {
+                    const opt = document.createElement('option');
+                    opt.value = code; 
+                    opt.innerText = code;
+                    intGroup.appendChild(opt);
+                });
+                locSelect.appendChild(intGroup);
+            }
+        }
+
+        function handleFilterChange() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            ['filter-location', 'filter-year', 'sort-order'].forEach(id => {
+                const el = document.getElementById(id);
+                const isDefault = el.value === 'all' || (id === 'sort-order' && el.value === 'location' && el.selectedIndex === 0);
+                
+                if (id === 'sort-order') {
+                   if (el.selectedIndex !== 0) el.classList.add('active-filter');
+                   else el.classList.remove('active-filter');
+                } else {
+                   if (el.value !== 'all') el.classList.add('active-filter');
+                   else el.classList.remove('active-filter');
+                }
+            });
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const locFilter = document.getElementById('filter-location').value;
+            const yearFilter = document.getElementById('filter-year').value;
+            const sortOrder = document.getElementById('sort-order').value;
+
+            // 1. Filter
+            let filtered = allStamps.filter(item => {
+                let locMatch = true;
+                if (locFilter !== 'all') {
+                    if (locFilter === 'US_ALL') {
+                        locMatch = !item.isInternational;
+                    } else if (locFilter === 'INTL_ALL') {
+                        locMatch = item.isInternational;
+                    } else {
+                        // Match State Code or Country Name
+                        locMatch = item.locationLabel === locFilter;
+                    }
+                }
+
+                let yearMatch = true;
+                if (yearFilter !== 'all') {
+                    yearMatch = item.visit_year == yearFilter;
+                }
+
+                return locMatch && yearMatch;
+            });
+
+            // 2. Sort
+            filtered.sort((a, b) => {
+                if (sortOrder === 'date-added') return new Date(b.$createdAt) - new Date(a.$createdAt);
+                
+                if (sortOrder === 'recent') {
+                    const yearDiff = (b.visit_year || 0) - (a.visit_year || 0);
+                    if (yearDiff !== 0) return yearDiff;
+                    return b.fullDate - a.fullDate; 
+                }
+                
+                if (sortOrder === 'az') return a.name.localeCompare(b.name);
+                
+                if (sortOrder === 'location') {
+                    // Separate US and Intl for clean sorting
+                    const aInt = a.isInternational ? 1 : 0;
+                    const bInt = b.isInternational ? 1 : 0;
+                    if (aInt !== bInt) return aInt - bInt; // US First
+
+                    const locA = a.locationKey;
+                    const locB = b.locationKey;
+                    return locA.localeCompare(locB) || a.name.localeCompare(b.name);
+                }
+                return 0;
+            });
+
+            renderMasonryGrid(filtered, sortOrder);
+        }
+
+        // --- 6. RENDERING (JS CALCULATED MASONRY) ---
+        function renderMasonryGrid(data, sortOrder) {
+            const container = document.getElementById('stamps-container');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">No stamps found.</div>';
+                return;
+            }
+
+            // A. Calculate Columns based on width
+            const width = window.innerWidth;
+            let numCols = 1;
+            if (width > 1400) numCols = 5;
+            else if (width > 1100) numCols = 4;
+            else if (width > 800) numCols = 3;
+            else if (width > 600) numCols = 2;
+            else numCols = 1;
+
+            // B. Create Flattened List with Headers
+            let flatList = [];
+            let currentGroup = null;
+
+            data.forEach((item) => {
+                let groupKey = '';
+                let groupLabel = '';
+
+                // Determine Grouping
+                if (sortOrder === 'location') {
+                    groupKey = item.locationLabel;
+                    groupLabel = item.isInternational ? item.locationLabel : item.locationLabel; 
+                } else if (sortOrder === 'recent') {
+                    groupKey = item.visit_year ? item.visit_year.toString() : 'Unknown';
+                    groupLabel = groupKey;
+                } else {
+                    const yearFilter = document.getElementById('filter-year').value;
+                    const locFilter = document.getElementById('filter-location').value;
+                    if (yearFilter !== 'all' && locFilter === 'all') {
+                        groupKey = item.visit_year;
+                        groupLabel = groupKey;
+                    } else if (locFilter !== 'all') {
+                         groupKey = item.locationLabel;
+                         groupLabel = item.locationLabel;
+                    }
+                }
+
+                if (groupKey && groupKey !== currentGroup) {
+                    currentGroup = groupKey;
+                    flatList.push({ type: 'header', label: groupLabel });
+                }
+
+                flatList.push({ type: 'item', data: item });
+            });
+
+            // C. Create Column Arrays
+            const columns = Array.from({ length: numCols }, () => []);
+
+            // D. Distribute Items Left-to-Right (Col 1, Col 2, Col 3...)
+            flatList.forEach((obj, index) => {
+                const colIndex = index % numCols;
+                columns[colIndex].push(obj);
+            });
+
+            // E. Render Columns
+            let totalItemIndex = 0; // For staggered animation across all columns
+            
+            // We need to sync animation delay across columns to look like left-to-right filling
+            // The item at flatList[i] is at columns[i % numCols][Math.floor(i / numCols)]
+            
+            // Actually, simpler approach for styling:
+            // Just iterate the columns and append divs. 
+            // BUT we want animation order to be 1st item -> 2nd item -> 3rd item visually.
+            // Since we filled them in that order, we can just assign animation-delay based on flat index.
+
+            columns.forEach((colItems, colIdx) => {
+                const colDiv = document.createElement('div');
+                colDiv.className = 'masonry-col';
+                
+                colItems.forEach((obj) => {
+                    let element;
+                    // Calculate original index to sync animation timing
+                    // We know flatList structure, but finding exact index is O(N).
+                    // Optimization: We can store index in obj.
+                    
+                    if (obj.type === 'header') {
+                        element = createInkStampElement(obj.label);
+                    } else {
+                        const color = THEMES[totalItemIndex % THEMES.length];
+                        obj.data.theme_color = color;
+                        element = createStampCard(obj.data, totalItemIndex);
+                        totalItemIndex++; // Only increment color for actual stamps
+                    }
+
+                    // Calculate global delay based on order in flatList
+                    // Let's find this object in flatList to get its index
+                    const globalIndex = flatList.indexOf(obj);
+                    element.style.animationDelay = `${globalIndex * 0.05}s`; // Fast stagger
+
+                    colDiv.appendChild(element);
+                });
+
+                container.appendChild(colDiv);
+            });
+        }
+        
+        // Helper to return DOM element for Ink Stamp (vs string)
+        function createInkStampElement(text) {
+             const wrapper = document.createElement('div');
+             wrapper.innerHTML = `
+            <div class="ink-stamp-node">
+                <div class="ink-stamp-circle">
+                    ${text}
+                </div>
+            </div>`;
+            return wrapper.firstElementChild;
+        }
+
+        function createStampCard(item, index) {
+            const div = document.createElement('div');
+            div.className = 'stamp-card';
+            div.style.setProperty('--card-theme', item.theme_color);
+
+            div.addEventListener('click', function() {
+                openModal(item);
+            });
+
+            const yearStr = item.visit_year || '';
+
+            if (item.img_url) {
+                div.innerHTML = `
+                    <div class="stamp">
+                        <div class="stamp-content-wrapper">
+                            <div class="stamp-image">
+                                <img src="${item.img_url}" alt="${item.name}" onload="this.classList.add('loaded')">
+                                ${yearStr ? `<div class="h-year">${yearStr}</div>` : ''}
+                            </div>
+                            <div class="stamp-overlay-text">
+                                <div class="h-city">${item.city || 'Unknown'}</div>
+                                <div class="h-church">${item.name}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                div.innerHTML = `
+                    <div class="stamp-journal">
+                        <div class="h-city h-city-journal">${item.city || 'Unknown'}</div>
+                        <div class="h-church">${item.name}</div>
+                        ${item.notes ? `<div class="h-note">${item.notes}</div>` : ''}
+                        ${yearStr ? `<div class="h-year" style="position:relative; top:0; right:0; background:none; padding:0; margin-top:auto; text-align:right;">${yearStr}</div>` : ''}
+                    </div>
+                `;
+            }
+            return div;
+        }
+
+        function formatDate(item) {
+            if (!item.visit_year && !item.visit_month && !item.visit_day) return null;
+            const m = item.visit_month || "";
+            const d = item.visit_day ? item.visit_day + "," : "";
+            const y = item.visit_year || "";
+            
+            if (!m && !y) return null;
+            return `${m} ${d} ${y}`.trim(); 
+        }
+
+        // --- 7. MODAL LOGIC ---
+        function openModal(item) {
+            const modal = document.getElementById('modal-overlay');
+            const left = document.getElementById('modal-image-container');
+            const cityBtn = document.getElementById('modal-city-btn');
+            
+            if (!modal || !cityBtn) return; 
+        
+            modal.style.setProperty('--modal-theme', item.theme_color);
+            modal.style.display = 'flex'; 
+            
+            document.body.style.overflow = 'hidden';
+
+            let mapQuery = `${item.name}, ${item.city}`;
+            if (item.isInternational) {
+                mapQuery += `, ${item.locationLabel}`;
+            } else {
+                mapQuery += `, ${item.state_code}`;
+            }
+            // Fix: Syntax for template literal
+            cityBtn.href = `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(mapQuery)}`;
+
+            cityBtn.style.backgroundColor = `color-mix(in srgb, ${item.theme_color}, white 90%)`;
+            cityBtn.style.color = item.theme_color;
+            cityBtn.style.borderColor = item.theme_color;
+        
+            if (item.img_url) {
+                left.innerHTML = `<img src="${item.img_url}" alt="${item.name}">`;
+            } else {
+                const locationLabel = item.isInternational ? 'INTL' : (item.state_code || 'LOG');
+                left.innerHTML = `
+                <div class="ink-stamp-circle" style="border-color:${item.theme_color}; color:${item.theme_color}; transform:rotate(-10deg); width:80%; margin:0;">
+                    ${locationLabel}
+                </div>`;
+            }
+        
+            document.getElementById('modal-title').innerText = item.name;
+            document.getElementById('modal-title').style.color = item.theme_color;
+            
+            const dateStr = formatDate(item);
+            const dateElem = document.getElementById('modal-meta');
+            if (dateStr && !dateStr.includes("Undefined")) {
+                dateElem.innerText = dateStr;
+                dateElem.style.display = 'block';
+            } else {
+                dateElem.style.display = 'none';
+            }
+        
+            const noteElem = document.getElementById('modal-note');
+            if (item.notes && item.notes.trim() !== "") {
+                noteElem.innerText = item.notes;
+                noteElem.style.display = 'block';
+            } else {
+                noteElem.style.display = 'none';
+            }
+            
+            let locString = item.city || '';
+            if (!item.isInternational) {
+                if (item.state_code && !locString.includes(item.state_code)) {
+                    locString += `, ${item.state_code}`;
+                }
+            } else {
+                if (item.locationLabel) locString += `, ${item.locationLabel}`;
+            }
+            cityBtn.innerText = locString;
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto'; 
+        }
+
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Resize Listener for Masonry
+        window.addEventListener('resize', () => {
+             // Debounce slightly or just rerun
+             if(allStamps.length > 0) applyFilters();
+        });
+
+        init();
+
+    </script>
+</body>
+</html>
