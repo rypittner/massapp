@@ -880,7 +880,7 @@
                     <div class="stamp">
                         <div class="stamp-content-wrapper">
                             <div class="stamp-image">
-                                <img src="${item.img_url}" alt="${item.name}">
+                                <img src="${item.img_url}" alt="${item.name}" onload="this.classList.add('loaded')">
                                 ${yearStr ? `<div class="h-year">${yearStr}</div>` : ''}
                             </div>
                             <div class="stamp-overlay-text">
